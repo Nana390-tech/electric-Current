@@ -1,1826 +1,1822 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP 0103 - Electric Current - Reading 6 | Higher Colleges of Technology</title>
-    <meta name="description" content="Interactive learning application for A2+ English students studying electricity and electric current">
-    <meta name="author" content="Nazila Motahari">
+import React, { useState, useRef } from 'react';
+import { Zap, Award, Star, CheckCircle, XCircle, RefreshCw, Trophy, Download } from 'lucide-react';
+
+const ElectricCurrentLesson = () => {
+  const [currentActivity, setCurrentActivity] = useState(0);
+  const [points, setPoints] = useState(0);
+  const [completedActivities, setCompletedActivities] = useState([]);
+  
+  // Activity 1 State
+  const [activity1Answers, setActivity1Answers] = useState({
+    word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: ''
+  });
+  const [activity1Checked, setActivity1Checked] = useState(false);
+  const [activity1Score, setActivity1Score] = useState(null);
+  const [selectedBlank1, setSelectedBlank1] = useState(null);
+  
+  // Activity 2 State
+  const [activity2Answers, setActivity2Answers] = useState({
+    a: '', b: '', c: ''
+  });
+  const [activity2Checked, setActivity2Checked] = useState(false);
+  const [activity2Score, setActivity2Score] = useState(null);
+  
+  // Activity 3 State
+  const [activity3Answers, setActivity3Answers] = useState({});
+  const [activity3Checked, setActivity3Checked] = useState(false);
+  const [activity3Score, setActivity3Score] = useState(null);
+  
+  // Activity 4 State
+  const [activity4Answers, setActivity4Answers] = useState({});
+  const [activity4Checked, setActivity4Checked] = useState(false);
+  const [activity4Score, setActivity4Score] = useState(null);
+  const [showFlashcards, setShowFlashcards] = useState(true);
+  const [flippedCards, setFlippedCards] = useState({});
+  const [selectedBlank4, setSelectedBlank4] = useState(null);
+  
+  // Activity 5 State
+  const [activity5Checked, setActivity5Checked] = useState(false);
+  const [activity5Score, setActivity5Score] = useState(null);
+  
+  // Activity 6 State
+  const [activity6Answers, setActivity6Answers] = useState({
+    para1: '', para2: '', para3: ''
+  });
+  const [activity6Checked, setActivity6Checked] = useState(false);
+  const [activity6Score, setActivity6Score] = useState(null);
+  
+  // Activity 7 State
+  const [activity7Answers, setActivity7Answers] = useState({});
+  const [activity7Checked, setActivity7Checked] = useState(false);
+  const [activity7Score, setActivity7Score] = useState(null);
+
+  // Define word counts first
+  const activity1WordCounts = {
+    'atom': 2,
+    'protons': 2,
+    'neutrons': 2,
+    'electrons': 2,
+    'Atoms': 1
+  };
+
+  const activity4WordCounts = {
+    'current': 5,
+    'power': 1,
+    'wires': 2,
+    'appliances': 1,
+    'generators': 1,
+    'magnet': 1,
+    'wire': 2,
+    'electrons': 1,
+    'outlets': 1,
+    'plugs in': 1,
+    'device': 2
+  };
+
+  // Word banks and data
+  const activity1WordBank = ['atom', 'protons', 'neutrons', 'electrons', 'Atoms'];
+  
+  const activity2Correct = {
+    a: 'protons', b: 'electrons', c: 'Neutrons'
+  };
+
+  const activity3Questions = [
+    { num: 1, options: ['Electricity', 'Lightning'], correct: 'Electricity' },
+    { num: 2, options: ['neutrons', 'electrons'], correct: 'electrons' },
+    { num: 3, options: ['wire', 'energy'], correct: 'energy' },
+    { num: 4, options: ['flow', 'charge'], correct: 'flow' },
+    { num: 5, options: ['light bulbs', 'electricity'], correct: 'electricity' },
+    { num: 6, options: ['lightning', 'power'], correct: 'lightning' },
+    { num: 7, options: ['electrons', 'batteries'], correct: 'electrons' },
+    { num: 8, options: ['switch', 'energy'], correct: 'energy' },
+    { num: 9, options: ['power', 'generate'], correct: 'generate' },
+    { num: 10, options: ['wires', 'batteries'], correct: 'wires' },
+    { num: 11, options: ['energy', 'power'], correct: 'power' },
+    { num: 12, options: ['provides', 'switches'], correct: 'provides' },
+    { num: 13, options: ['universe', 'battery'], correct: 'universe' },
+    { num: 14, options: ['wires', 'atoms'], correct: 'atoms' },
+    { num: 15, options: ['positive', 'negative'], correct: 'negative' },
+    { num: 16, options: ['power', 'charge'], correct: 'charge' },
+    { num: 17, options: ['positive', 'neutron'], correct: 'positive' },
+    { num: 18, options: ['switches', 'charges'], correct: 'charges' },
+    { num: 19, options: ['Electrical', 'Electricity'], correct: 'Electricity' },
+    { num: 20, options: ['electrons', 'neutrons'], correct: 'electrons' }
+  ];
+
+  const activity4WordBank = ['appliances', 'current', 'device', 'electrons', 'generators', 'magnet', 'outlets', 'plugs in', 'power', 'wire', 'wires'];
+
+  const activity4Blanks = [
+    'current', 'power', 'current', 'wires', 'appliances', 'generators',
+    'current', 'magnet', 'wire', 'electrons', 'wire', 'wires',
+    'current', 'outlets', 'plugs in', 'device', 'current', 'device'
+  ];
+
+  const vocabularyCards = [
+    { word: 'current', meaning: 'the flow of electricity through a wire', arabic: 'تيار' },
+    { word: 'power', meaning: 'energy supplied to operate electrical devices', arabic: 'طاقة' },
+    { word: 'wire', meaning: 'a thin metal thread that carries electricity', arabic: 'سلك' },
+    { word: 'appliance', meaning: 'an electrical device used in the home', arabic: 'جهاز' },
+    { word: 'generator', meaning: 'a machine that produces electricity', arabic: 'مولد' },
+    { word: 'magnet', meaning: 'an object that produces a magnetic field', arabic: 'مغناطيس' },
+    { word: 'electron', meaning: 'a tiny particle with negative charge', arabic: 'إلكترون' },
+    { word: 'device', meaning: 'a piece of electrical equipment', arabic: 'جهاز' },
+    { word: 'plug in', meaning: 'to connect equipment to electricity supply', arabic: 'يوصل بالكهرباء' },
+    { word: 'outlet', meaning: 'a socket where plugs connect to electricity', arabic: 'مقبس' }
+  ];
+
+  const activity6Headings = [
+    'What is electricity?',
+    'How electricity works.',
+    'Generating electricity.'
+  ];
+
+  const activity6Correct = {
+    para1: 'What is electricity?',
+    para2: 'How electricity works.',
+    para3: 'Generating electricity.'
+  };
+
+  const activity7Questions = [
+    {
+      id: 1,
+      question: "What is electricity?",
+      options: ["The flow of electrons", "The flow of water", "The flow of air", "The flow of light"],
+      correct: "The flow of electrons"
+    },
+    {
+      id: 2,
+      question: "Where can we see electricity in nature?",
+      options: ["In lightning", "In rain", "In wind", "In snow"],
+      correct: "In lightning"
+    },
+    {
+      id: 3,
+      question: "What is lightning?",
+      options: ["Many electrons moving through air", "Water falling from clouds", "Wind blowing fast", "Clouds touching each other"],
+      correct: "Many electrons moving through air"
+    },
+    {
+      id: 4,
+      question: "How do scientists send electricity to our homes?",
+      options: ["Through wires", "Through the air", "Through water pipes", "Through the ground"],
+      correct: "Through wires"
+    },
+    {
+      id: 5,
+      question: "What does electricity power in the modern world?",
+      options: ["Heaters, light bulbs, and computers", "Only light bulbs", "Only heaters", "Only computers"],
+      correct: "Heaters, light bulbs, and computers"
+    }
+  ];
+
+  // Check functions
+  const checkActivity1 = () => {
+    let correct = 0;
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    if (activity1Answers.word1 === 'atom') correct++;
     
-    <!-- React and ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    const threeParts = [activity1Answers.word2, activity1Answers.word3, activity1Answers.word4];
+    const threePartsCorrect = ['protons', 'neutrons', 'electrons'];
+    const threePartsSet = new Set(threeParts);
+    if (threePartsSet.size === 3 && threePartsCorrect.every(word => threePartsSet.has(word))) {
+      correct += 3;
+    }
     
-    <!-- Babel Standalone for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    const nucleusParts = [activity1Answers.word5, activity1Answers.word6];
+    const nucleusPartsCorrect = ['protons', 'neutrons'];
+    const nucleusSet = new Set(nucleusParts);
+    if (nucleusSet.size === 2 && nucleusPartsCorrect.every(word => nucleusSet.has(word))) {
+      correct += 2;
+    }
     
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    if (activity1Answers.word7 === 'atom') correct++;
+    if (activity1Answers.word8 === 'electrons') correct++;
+    if (activity1Answers.word9 === 'Atoms') correct++;
     
-    <style>
-        body {
+    const percentage = Math.round((correct / 9) * 100);
+    setActivity1Score(percentage);
+    
+    if (percentage >= 75) {
+      const earnedPoints = correct * 5;
+      setPoints(points + earnedPoints);
+      if (!completedActivities.includes(1)) {
+        setCompletedActivities([...completedActivities, 1]);
+      }
+    }
+    setActivity1Checked(true);
+  };
+
+  const checkActivity2 = () => {
+    let correct = 0;
+    Object.keys(activity2Correct).forEach(key => {
+      if (activity2Answers[key] === activity2Correct[key]) correct++;
+    });
+    const percentage = Math.round((correct / 3) * 100);
+    setActivity2Score(percentage);
+    
+    if (percentage >= 75) {
+      const earnedPoints = correct * 10;
+      setPoints(points + earnedPoints);
+      if (!completedActivities.includes(2)) {
+        setCompletedActivities([...completedActivities, 2]);
+      }
+    }
+    setActivity2Checked(true);
+  };
+
+  const checkActivity3 = () => {
+    let correct = 0;
+    activity3Questions.forEach(q => {
+      if (activity3Answers[q.num] === q.correct) correct++;
+    });
+    const percentage = Math.round((correct / 20) * 100);
+    setActivity3Score(percentage);
+    
+    if (percentage >= 75) {
+      const earnedPoints = correct * 5;
+      setPoints(points + earnedPoints);
+      if (!completedActivities.includes(3)) {
+        setCompletedActivities([...completedActivities, 3]);
+      }
+    }
+    setActivity3Checked(true);
+  };
+
+  const checkActivity4 = () => {
+    let correct = 0;
+    activity4Blanks.forEach((word, idx) => {
+      if (activity4Answers[idx] === word) correct++;
+    });
+    const percentage = Math.round((correct / 18) * 100);
+    setActivity4Score(percentage);
+    
+    if (percentage >= 75) {
+      const earnedPoints = correct * 5 + 50;
+      setPoints(points + earnedPoints);
+      if (!completedActivities.includes(4)) {
+        setCompletedActivities([...completedActivities, 4]);
+      }
+    }
+    setActivity4Checked(true);
+  };
+
+  const checkActivity5 = () => {
+    if (!completedActivities.includes(5)) {
+      setCompletedActivities([...completedActivities, 5]);
+      setPoints(points + 50);
+    }
+    setActivity5Checked(true);
+  };
+
+  const checkActivity6 = () => {
+    let correct = 0;
+    Object.keys(activity6Correct).forEach(key => {
+      if (activity6Answers[key] === activity6Correct[key]) correct++;
+    });
+    const percentage = Math.round((correct / 3) * 100);
+    setActivity6Score(percentage);
+    
+    if (percentage >= 75) {
+      const earnedPoints = correct * 15;
+      setPoints(points + earnedPoints);
+      if (!completedActivities.includes(6)) {
+        setCompletedActivities([...completedActivities, 6]);
+      }
+    }
+    setActivity6Checked(true);
+  };
+
+  const checkActivity7 = () => {
+    let correct = 0;
+    activity7Questions.forEach(q => {
+      if (activity7Answers[q.id] === q.correct) correct++;
+    });
+    const percentage = Math.round((correct / 5) * 100);
+    setActivity7Score(percentage);
+    
+    if (percentage >= 75) {
+      const earnedPoints = correct * 10;
+      setPoints(points + earnedPoints);
+      if (!completedActivities.includes(7)) {
+        setCompletedActivities([...completedActivities, 7]);
+      }
+    }
+    setActivity7Checked(true);
+  };
+
+  // Retry functions
+  const retryActivity1 = () => {
+    setActivity1Answers({ word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: '' });
+    setActivity1Checked(false);
+    setActivity1Score(null);
+    setSelectedBlank1(null);
+  };
+
+  const retryActivity2 = () => {
+    setActivity2Answers({ a: '', b: '', c: '' });
+    setActivity2Checked(false);
+    setActivity2Score(null);
+  };
+
+  const retryActivity3 = () => {
+    setActivity3Answers({});
+    setActivity3Checked(false);
+    setActivity3Score(null);
+  };
+
+  const retryActivity4 = () => {
+    setActivity4Answers({});
+    setActivity4Checked(false);
+    setActivity4Score(null);
+    setShowFlashcards(true);
+    setFlippedCards({});
+    setSelectedBlank4(null);
+  };
+
+  const retryActivity5 = () => {
+    setShowFlashcards(true);
+    setFlippedCards({});
+    setActivity5Checked(false);
+    setActivity5Score(null);
+  };
+
+  const retryActivity6 = () => {
+    setActivity6Answers({ para1: '', para2: '', para3: '' });
+    setActivity6Checked(false);
+    setActivity6Score(null);
+  };
+
+  const retryActivity7 = () => {
+    setActivity7Answers({});
+    setActivity7Checked(false);
+    setActivity7Score(null);
+  };
+
+  const resetLesson = () => {
+    setCurrentActivity(0);
+    setPoints(0);
+    setCompletedActivities([]);
+    setActivity1Answers({ word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: '' });
+    setActivity1Checked(false);
+    setActivity1Score(null);
+    setSelectedBlank1(null);
+    setActivity2Answers({ a: '', b: '', c: '' });
+    setActivity2Checked(false);
+    setActivity2Score(null);
+    setActivity3Answers({});
+    setActivity3Checked(false);
+    setActivity3Score(null);
+    setActivity4Answers({});
+    setActivity4Checked(false);
+    setActivity4Score(null);
+    setShowFlashcards(true);
+    setFlippedCards({});
+    setSelectedBlank4(null);
+    setActivity5Checked(false);
+    setActivity5Score(null);
+    setActivity6Answers({ para1: '', para2: '', para3: '' });
+    setActivity6Checked(false);
+    setActivity6Score(null);
+    setActivity7Answers({});
+    setActivity7Checked(false);
+    setActivity7Score(null);
+  };
+
+  const certificateRef = useRef(null);
+
+  const downloadCertificate = () => {
+    // Create a new window for printing
+    const printWindow = window.open('', '', 'width=800,height=600');
+    const certificateHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Certificate of Completion</title>
+        <style>
+          body {
+            font-family: 'Georgia', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-                sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .animate-spin {
-            animation: spin 4s linear infinite;
-        }
-
-        .animate-bounce {
-            animation: bounce 1s ease-in-out infinite;
-        }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
-
-    <script type="text/babel">        const { useState, useRef } = React;
-        
-        const ElectricCurrentLesson = () => {
-          const [currentActivity, setCurrentActivity] = useState(0);
-          const [points, setPoints] = useState(0);
-          const [completedActivities, setCompletedActivities] = useState([]);
-          
-          // Activity 1 State
-          const [activity1Answers, setActivity1Answers] = useState({
-            word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: ''
-          });
-          const [activity1Checked, setActivity1Checked] = useState(false);
-          const [activity1Score, setActivity1Score] = useState(null);
-          const [selectedBlank1, setSelectedBlank1] = useState(null);
-          
-          // Activity 2 State
-          const [activity2Answers, setActivity2Answers] = useState({
-            a: '', b: '', c: ''
-          });
-          const [activity2Checked, setActivity2Checked] = useState(false);
-          const [activity2Score, setActivity2Score] = useState(null);
-          
-          // Activity 3 State
-          const [activity3Answers, setActivity3Answers] = useState({});
-          const [activity3Checked, setActivity3Checked] = useState(false);
-          const [activity3Score, setActivity3Score] = useState(null);
-          
-          // Activity 4 State
-          const [activity4Answers, setActivity4Answers] = useState({});
-          const [activity4Checked, setActivity4Checked] = useState(false);
-          const [activity4Score, setActivity4Score] = useState(null);
-          const [showFlashcards, setShowFlashcards] = useState(true);
-          const [flippedCards, setFlippedCards] = useState({});
-          const [selectedBlank4, setSelectedBlank4] = useState(null);
-          
-          // Activity 5 State
-          const [activity5Checked, setActivity5Checked] = useState(false);
-          const [activity5Score, setActivity5Score] = useState(null);
-          
-          // Activity 6 State
-          const [activity6Answers, setActivity6Answers] = useState({
-            para1: '', para2: '', para3: ''
-          });
-          const [activity6Checked, setActivity6Checked] = useState(false);
-          const [activity6Score, setActivity6Score] = useState(null);
-          
-          // Activity 7 State
-          const [activity7Answers, setActivity7Answers] = useState({});
-          const [activity7Checked, setActivity7Checked] = useState(false);
-          const [activity7Score, setActivity7Score] = useState(null);// Define word counts
-          const activity1WordCounts = {
-            'atom': 2,
-            'protons': 2,
-            'neutrons': 2,
-            'electrons': 2,
-            'Atoms': 1
-          };
-
-          const activity4WordCounts = {
-            'current': 5,
-            'power': 1,
-            'wires': 2,
-            'appliances': 1,
-            'generators': 1,
-            'magnet': 1,
-            'wire': 2,
-            'electrons': 1,
-            'outlets': 1,
-            'plugs in': 1,
-            'device': 2
-          };
-
-          // Word banks and data
-          const activity1WordBank = ['atom', 'protons', 'neutrons', 'electrons', 'Atoms'];
-          
-          const activity2Correct = {
-            a: 'protons', b: 'electrons', c: 'Neutrons'
-          };
-
-          const activity3Questions = [
-            { num: 1, options: ['Electricity', 'Lightning'], correct: 'Electricity' },
-            { num: 2, options: ['neutrons', 'electrons'], correct: 'electrons' },
-            { num: 3, options: ['wire', 'energy'], correct: 'energy' },
-            { num: 4, options: ['flow', 'charge'], correct: 'flow' },
-            { num: 5, options: ['light bulbs', 'electricity'], correct: 'electricity' },
-            { num: 6, options: ['lightning', 'power'], correct: 'lightning' },
-            { num: 7, options: ['electrons', 'batteries'], correct: 'electrons' },
-            { num: 8, options: ['switch', 'energy'], correct: 'energy' },
-            { num: 9, options: ['power', 'generate'], correct: 'generate' },
-            { num: 10, options: ['wires', 'batteries'], correct: 'wires' },
-            { num: 11, options: ['energy', 'power'], correct: 'power' },
-            { num: 12, options: ['provides', 'switches'], correct: 'provides' },
-            { num: 13, options: ['universe', 'battery'], correct: 'universe' },
-            { num: 14, options: ['wires', 'atoms'], correct: 'atoms' },
-            { num: 15, options: ['positive', 'negative'], correct: 'negative' },
-            { num: 16, options: ['power', 'charge'], correct: 'charge' },
-            { num: 17, options: ['positive', 'neutron'], correct: 'positive' },
-            { num: 18, options: ['switches', 'charges'], correct: 'charges' },
-            { num: 19, options: ['Electrical', 'Electricity'], correct: 'Electricity' },
-            { num: 20, options: ['electrons', 'neutrons'], correct: 'electrons' }
-          ];
-
-          const activity4WordBank = ['appliances', 'current', 'device', 'electrons', 'generators', 'magnet', 'outlets', 'plugs in', 'power', 'wire', 'wires'];
-
-          const activity4Blanks = [
-            'current', 'power', 'current', 'wires', 'appliances', 'generators',
-            'current', 'magnet', 'wire', 'electrons', 'wire', 'wires',
-            'current', 'outlets', 'plugs in', 'device', 'current', 'device'
-          ];
-
-          const vocabularyCards = [
-            { word: 'current', meaning: 'the flow of electricity through a wire', arabic: 'تيار' },
-            { word: 'power', meaning: 'energy supplied to operate electrical devices', arabic: 'طاقة' },
-            { word: 'wire', meaning: 'a thin metal thread that carries electricity', arabic: 'سلك' },
-            { word: 'appliance', meaning: 'an electrical device used in the home', arabic: 'جهاز' },
-            { word: 'generator', meaning: 'a machine that produces electricity', arabic: 'مولد' },
-            { word: 'magnet', meaning: 'an object that produces a magnetic field', arabic: 'مغناطيس' },
-            { word: 'electron', meaning: 'a tiny particle with negative charge', arabic: 'إلكترون' },
-            { word: 'device', meaning: 'a piece of electrical equipment', arabic: 'جهاز' },
-            { word: 'plug in', meaning: 'to connect equipment to electricity supply', arabic: 'يوصل بالكهرباء' },
-            { word: 'outlet', meaning: 'a socket where plugs connect to electricity', arabic: 'مقبس' }
-          ];
-
-          const activity6Headings = [
-            'What is electricity?',
-            'How electricity works.',
-            'Generating electricity.'
-          ];
-
-          const activity6Correct = {
-            para1: 'What is electricity?',
-            para2: 'How electricity works.',
-            para3: 'Generating electricity.'
-          };
-
-          const activity7Questions = [
-            {
-              id: 1,
-              question: "What is electricity?",
-              options: ["The flow of electrons", "The flow of water", "The flow of air", "The flow of light"],
-              correct: "The flow of electrons"
-            },
-            {
-              id: 2,
-              question: "Where can we see electricity in nature?",
-              options: ["In lightning", "In rain", "In wind", "In snow"],
-              correct: "In lightning"
-            },
-            {
-              id: 3,
-              question: "What is lightning?",
-              options: ["Many electrons moving through air", "Water falling from clouds", "Wind blowing fast", "Clouds touching each other"],
-              correct: "Many electrons moving through air"
-            },
-            {
-              id: 4,
-              question: "How do scientists send electricity to our homes?",
-              options: ["Through wires", "Through the air", "Through water pipes", "Through the ground"],
-              correct: "Through wires"
-            },
-            {
-              id: 5,
-              question: "What does electricity power in the modern world?",
-              options: ["Heaters, light bulbs, and computers", "Only light bulbs", "Only heaters", "Only computers"],
-              correct: "Heaters, light bulbs, and computers"
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          }
+          .certificate {
+            background: white;
+            padding: 60px;
+            border: 20px solid #f4d03f;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 800px;
+          }
+          .trophy {
+            font-size: 80px;
+            margin-bottom: 20px;
+          }
+          h1 {
+            color: #7c3aed;
+            font-size: 48px;
+            margin: 20px 0;
+            font-weight: bold;
+          }
+          h2 {
+            color: #333;
+            font-size: 32px;
+            margin: 30px 0 10px;
+          }
+          .subtitle {
+            color: #666;
+            font-size: 24px;
+            margin: 10px 0 30px;
+          }
+          .course-title {
+            color: #7c3aed;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 10px;
+          }
+          .score {
+            font-size: 36px;
+            color: #059669;
+            font-weight: bold;
+            margin: 30px 0;
+            padding: 20px;
+            background: #d1fae5;
+            border-radius: 15px;
+          }
+          .institution {
+            color: #666;
+            font-size: 20px;
+            margin: 30px 0;
+            font-style: italic;
+          }
+          .designer {
+            color: #888;
+            font-size: 18px;
+            margin-top: 40px;
+            border-top: 2px solid #ddd;
+            padding-top: 20px;
+          }
+          .stars {
+            font-size: 40px;
+            color: #f4d03f;
+            margin: 20px 0;
+          }
+          @media print {
+            body {
+              background: white;
             }
-          ];// Check functions
-          const checkActivity1 = () => {
-            let correct = 0;
-            
-            if (activity1Answers.word1 === 'atom') correct++;
-            
-            const threeParts = [activity1Answers.word2, activity1Answers.word3, activity1Answers.word4];
-            const threePartsCorrect = ['protons', 'neutrons', 'electrons'];
-            const threePartsSet = new Set(threeParts);
-            if (threePartsSet.size === 3 && threePartsCorrect.every(word => threePartsSet.has(word))) {
-              correct += 3;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="certificate">
+          <div class="trophy">🏆</div>
+          <h1>Certificate of Completion</h1>
+          <div class="subtitle">This is to certify that</div>
+          <h2>Student</h2>
+          <div class="subtitle">has successfully completed</div>
+          <div class="course-title">
+            ESP 0103 - Electric Current - Reading 6
+          </div>
+          <div class="score">
+            Final Score: ${points} Points
+          </div>
+          <div class="stars">⭐ ⭐ ⭐</div>
+          <div class="subtitle">All 7 activities completed with 75% or higher!</div>
+          <div class="institution">Higher Colleges of Technology</div>
+          <div class="designer">Designed by: Nazila Motahari</div>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    printWindow.document.write(certificateHTML);
+    printWindow.document.close();
+    
+    // Wait for content to load then print
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  };
+
+  const progressPercentage = (completedActivities.length / 7) * 100;
+
+  const renderBlank = (index, width = 'w-24') => {
+    return (
+      <input
+        type="text"
+        value={activity4Answers[index] || ''}
+        onClick={() => {
+          if (!activity4Checked) {
+            if (activity4Answers[index]) {
+              const newAnswers = {...activity4Answers};
+              delete newAnswers[index];
+              setActivity4Answers(newAnswers);
+            } else {
+              setSelectedBlank4(index);
             }
+          }
+        }}
+        className={`inline-block ${width} px-2 py-1 border-b-2 text-center cursor-pointer ${
+          selectedBlank4 === index ? 'border-blue-500 bg-blue-100' :
+          activity4Checked ? (activity4Answers[index] === activity4Blanks[index] ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+        }`}
+        disabled={activity4Checked}
+        readOnly
+      />
+    );
+  };
+
+  const activities = [
+    // Activity 1
+    <div key="act1" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 1: What is an atom?
+      </h2>
+      
+      <p className="text-gray-700">Before we read about Electric Current, we must try to remember what we learned in our science classes at school, especially physics and chemistry.</p>
+      
+      <div className="bg-blue-50 p-6 rounded-lg">
+        <p className="font-semibold mb-4">Look at this diagram of an atom:</p>
+        <div className="flex justify-center mb-6">
+          <div className="relative w-64 h-64 flex items-center justify-center">
+            <div className="absolute w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg z-10">
+              Nucleus
+            </div>
             
-            const nucleusParts = [activity1Answers.word5, activity1Answers.word6];
-            const nucleusPartsCorrect = ['protons', 'neutrons'];
-            const nucleusSet = new Set(nucleusParts);
-            if (nucleusSet.size === 2 && nucleusPartsCorrect.every(word => nucleusSet.has(word))) {
-              correct += 2;
-            }
+            <div className="absolute w-48 h-48 border-2 border-purple-300 rounded-full opacity-50"></div>
+            <div className="absolute w-56 h-56 border-2 border-purple-300 rounded-full opacity-50"></div>
             
-            if (activity1Answers.word7 === 'atom') correct++;
-            if (activity1Answers.word8 === 'electrons') correct++;
-            if (activity1Answers.word9 === 'Atoms') correct++;
+            <div className="absolute w-48 h-48 animate-spin" style={{ animationDuration: '4s' }}>
+              <div className="absolute top-0 left-1/2 -ml-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg border-2 border-white"></div>
+            </div>
             
-            const percentage = Math.round((correct / 9) * 100);
-            setActivity1Score(percentage);
+            <div className="absolute w-56 h-56 animate-spin" style={{ animationDuration: '6s', animationDirection: 'reverse' }}>
+              <div className="absolute top-0 left-1/2 -ml-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg border-2 border-white"></div>
+            </div>
             
-            if (percentage >= 75) {
-              const earnedPoints = correct * 5;
-              setPoints(points + earnedPoints);
-              if (!completedActivities.includes(1)) {
-                setCompletedActivities([...completedActivities, 1]);
-              }
-            }
-            setActivity1Checked(true);
-          };
+            <div className="absolute w-52 h-52 animate-spin" style={{ animationDuration: '5s' }}>
+              <div className="absolute bottom-0 left-1/2 -ml-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg border-2 border-white"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          const checkActivity2 = () => {
-            let correct = 0;
-            Object.keys(activity2Correct).forEach(key => {
-              if (activity2Answers[key] === activity2Correct[key]) correct++;
-            });
-            const percentage = Math.round((correct / 3) * 100);
-            setActivity2Score(percentage);
+      <div className="bg-white p-6 rounded-lg shadow">
+        <p className="font-semibold mb-4">Complete the paragraph using the word bank. Click on a blank to select it (it will turn blue), then click a word to fill it:</p>
+        <div className="flex flex-wrap gap-2 mb-6 p-4 bg-gray-100 rounded">
+          {activity1WordBank.map((word, idx) => {
+            const usedCount = Object.values(activity1Answers).filter(w => w === word).length;
+            const maxCount = activity1WordCounts[word];
+            const canUse = usedCount < maxCount;
             
-            if (percentage >= 75) {
-              const earnedPoints = correct * 10;
-              setPoints(points + earnedPoints);
-              if (!completedActivities.includes(2)) {
-                setCompletedActivities([...completedActivities, 2]);
-              }
-            }
-            setActivity2Checked(true);
-          };
-
-          const checkActivity3 = () => {
-            let correct = 0;
-            activity3Questions.forEach(q => {
-              if (activity3Answers[q.num] === q.correct) correct++;
-            });
-            const percentage = Math.round((correct / 20) * 100);
-            setActivity3Score(percentage);
-            
-            if (percentage >= 75) {
-              const earnedPoints = correct * 5;
-              setPoints(points + earnedPoints);
-              if (!completedActivities.includes(3)) {
-                setCompletedActivities([...completedActivities, 3]);
-              }
-            }
-            setActivity3Checked(true);
-          };
-
-          const checkActivity4 = () => {
-            let correct = 0;
-            activity4Blanks.forEach((word, idx) => {
-              if (activity4Answers[idx] === word) correct++;
-            });
-            const percentage = Math.round((correct / 18) * 100);
-            setActivity4Score(percentage);
-            
-            if (percentage >= 75) {
-              const earnedPoints = correct * 5 + 50;
-              setPoints(points + earnedPoints);
-              if (!completedActivities.includes(4)) {
-                setCompletedActivities([...completedActivities, 4]);
-              }
-            }
-            setActivity4Checked(true);
-          };          const checkActivity5 = () => {
-            if (!completedActivities.includes(5)) {
-              setCompletedActivities([...completedActivities, 5]);
-              setPoints(points + 50);
-            }
-            setActivity5Checked(true);
-          };
-
-          const checkActivity6 = () => {
-            let correct = 0;
-            Object.keys(activity6Correct).forEach(key => {
-              if (activity6Answers[key] === activity6Correct[key]) correct++;
-            });
-            const percentage = Math.round((correct / 3) * 100);
-            setActivity6Score(percentage);
-            
-            if (percentage >= 75) {
-              const earnedPoints = correct * 15;
-              setPoints(points + earnedPoints);
-              if (!completedActivities.includes(6)) {
-                setCompletedActivities([...completedActivities, 6]);
-              }
-            }
-            setActivity6Checked(true);
-          };
-
-          const checkActivity7 = () => {
-            let correct = 0;
-            activity7Questions.forEach(q => {
-              if (activity7Answers[q.id] === q.correct) correct++;
-            });
-            const percentage = Math.round((correct / 5) * 100);
-            setActivity7Score(percentage);
-            
-            if (percentage >= 75) {
-              const earnedPoints = correct * 10;
-              setPoints(points + earnedPoints);
-              if (!completedActivities.includes(7)) {
-                setCompletedActivities([...completedActivities, 7]);
-              }
-            }
-            setActivity7Checked(true);
-          };
-
-          // Retry functions
-          const retryActivity1 = () => {
-            setActivity1Answers({ word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: '' });
-            setActivity1Checked(false);
-            setActivity1Score(null);
-            setSelectedBlank1(null);
-          };
-
-          const retryActivity2 = () => {
-            setActivity2Answers({ a: '', b: '', c: '' });
-            setActivity2Checked(false);
-            setActivity2Score(null);
-          };
-
-          const retryActivity3 = () => {
-            setActivity3Answers({});
-            setActivity3Checked(false);
-            setActivity3Score(null);
-          };
-
-          const retryActivity4 = () => {
-            setActivity4Answers({});
-            setActivity4Checked(false);
-            setActivity4Score(null);
-            setShowFlashcards(true);
-            setFlippedCards({});
-            setSelectedBlank4(null);
-          };
-
-          const retryActivity6 = () => {
-            setActivity6Answers({ para1: '', para2: '', para3: '' });
-            setActivity6Checked(false);
-            setActivity6Score(null);
-          };
-
-          const retryActivity7 = () => {
-            setActivity7Answers({});
-            setActivity7Checked(false);
-            setActivity7Score(null);
-          };
-
-          const resetLesson = () => {
-            setCurrentActivity(0);
-            setPoints(0);
-            setCompletedActivities([]);
-            setActivity1Answers({ word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: '' });
-            setActivity1Checked(false);
-            setActivity1Score(null);
-            setSelectedBlank1(null);
-            setActivity2Answers({ a: '', b: '', c: '' });
-            setActivity2Checked(false);
-            setActivity2Score(null);
-            setActivity3Answers({});
-            setActivity3Checked(false);
-            setActivity3Score(null);
-            setActivity4Answers({});
-            setActivity4Checked(false);
-            setActivity4Score(null);
-            setShowFlashcards(true);
-            setFlippedCards({});
-            setSelectedBlank4(null);
-            setActivity5Checked(false);
-            setActivity5Score(null);
-            setActivity6Answers({ para1: '', para2: '', para3: '' });
-            setActivity6Checked(false);
-            setActivity6Score(null);
-            setActivity7Answers({});
-            setActivity7Checked(false);
-            setActivity7Score(null);
-          };const certificateRef = useRef(null);
-
-          const downloadCertificate = () => {
-            const printWindow = window.open('', '', 'width=800,height=600');
-            const certificateHTML = `
-              <!DOCTYPE html>
-              <html>
-              <head>
-                <title>Certificate of Completion</title>
-                <style>
-                  body {
-                    font-family: 'Georgia', serif;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    min-height: 100vh;
-                    margin: 0;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                  }
-                  .certificate {
-                    background: white;
-                    padding: 60px;
-                    border: 20px solid #f4d03f;
-                    border-radius: 20px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    text-align: center;
-                    max-width: 800px;
-                  }
-                  .trophy {
-                    font-size: 80px;
-                    margin-bottom: 20px;
-                  }
-                  h1 {
-                    color: #7c3aed;
-                    font-size: 48px;
-                    margin: 20px 0;
-                    font-weight: bold;
-                  }
-                  h2 {
-                    color: #333;
-                    font-size: 32px;
-                    margin: 30px 0 10px;
-                  }
-                  .subtitle {
-                    color: #666;
-                    font-size: 24px;
-                    margin: 10px 0 30px;
-                  }
-                  .course-title {
-                    color: #7c3aed;
-                    font-size: 28px;
-                    font-weight: bold;
-                    margin: 30px 0;
-                    padding: 20px;
-                    background: #f3f4f6;
-                    border-radius: 10px;
-                  }
-                  .score {
-                    font-size: 36px;
-                    color: #059669;
-                    font-weight: bold;
-                    margin: 30px 0;
-                    padding: 20px;
-                    background: #d1fae5;
-                    border-radius: 15px;
-                  }
-                  .institution {
-                    color: #666;
-                    font-size: 20px;
-                    margin: 30px 0;
-                    font-style: italic;
-                  }
-                  .designer {
-                    color: #888;
-                    font-size: 18px;
-                    margin-top: 40px;
-                    border-top: 2px solid #ddd;
-                    padding-top: 20px;
-                  }
-                  .stars {
-                    font-size: 40px;
-                    color: #f4d03f;
-                    margin: 20px 0;
-                  }
-                  @media print {
-                    body {
-                      background: white;
-                    }
-                  }
-                </style>
-              </head>
-              <body>
-                <div class="certificate">
-                  <div class="trophy">🏆</div>
-                  <h1>Certificate of Completion</h1>
-                  <div class="subtitle">This is to certify that</div>
-                  <h2>Student</h2>
-                  <div class="subtitle">has successfully completed</div>
-                  <div class="course-title">
-                    ESP 0103 - Electric Current - Reading 6
-                  </div>
-                  <div class="score">
-                    Final Score: ${points} Points
-                  </div>
-                  <div class="stars">⭐ ⭐ ⭐</div>
-                  <div class="subtitle">All 7 activities completed with 75% or higher!</div>
-                  <div class="institution">Higher Colleges of Technology</div>
-                  <div class="designer">Designed by: Nazila Motahari</div>
-                </div>
-              </body>
-              </html>
-            `;
-            
-            printWindow.document.write(certificateHTML);
-            printWindow.document.close();
-            
-            setTimeout(() => {
-              printWindow.print();
-            }, 250);
-          };
-
-          const progressPercentage = (completedActivities.length / 7) * 100;
-
-          const renderBlank = (index, width = 'w-24') => {
             return (
-              <input
-                type="text"
-                value={activity4Answers[index] || ''}
+              <button
+                key={idx}
                 onClick={() => {
-                  if (!activity4Checked) {
-                    if (activity4Answers[index]) {
-                      const newAnswers = {...activity4Answers};
-                      delete newAnswers[index];
-                      setActivity4Answers(newAnswers);
-                    } else {
-                      setSelectedBlank4(index);
-                    }
+                  if (canUse && selectedBlank1) {
+                    setActivity1Answers({ ...activity1Answers, [selectedBlank1]: word });
+                    setSelectedBlank1(null);
                   }
                 }}
-                className={`inline-block ${width} px-2 py-1 border-b-2 text-center cursor-pointer ${
-                  selectedBlank4 === index ? 'border-blue-500 bg-blue-100' :
-                  activity4Checked ? (activity4Answers[index] === activity4Blanks[index] ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+                className={`px-4 py-2 rounded transition ${
+                  !canUse ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-500 text-white hover:bg-purple-600'
                 }`}
-                disabled={activity4Checked}
-                readOnly
-              />
+                disabled={activity1Checked || !canUse}
+              >
+                {word} {maxCount > 1 && `(${usedCount}/${maxCount})`}
+              </button>
             );
-          };const activities = [
-            // Activity 1
-            <div key="act1" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 1: What is an atom?
-              </h2>
-              
-              <p className="text-gray-700">Before we read about Electric Current, we must try to remember what we learned in our science classes at school, especially physics and chemistry.</p>
-              
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <p className="font-semibold mb-4">Look at this diagram of an atom:</p>
-                <div className="flex justify-center mb-6">
-                  <div className="relative w-64 h-64 flex items-center justify-center">
-                    <div className="absolute w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg z-10">
-                      Nucleus
-                    </div>
-                    
-                    <div className="absolute w-48 h-48 border-2 border-purple-300 rounded-full opacity-50"></div>
-                    <div className="absolute w-56 h-56 border-2 border-purple-300 rounded-full opacity-50"></div>
-                    
-                    <div className="absolute w-48 h-48 animate-spin" style={{animationDuration: '4s'}}>
-                      <div className="absolute top-0 left-1/2 -ml-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg border-2 border-white"></div>
-                    </div>
-                    
-                    <div className="absolute w-56 h-56 animate-spin" style={{animationDuration: '6s', animationDirection: 'reverse'}}>
-                      <div className="absolute top-0 left-1/2 -ml-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg border-2 border-white"></div>
-                    </div>
-                    
-                    <div className="absolute w-52 h-52 animate-spin" style={{animationDuration: '5s'}}>
-                      <div className="absolute bottom-0 left-1/2 -ml-4 w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg border-2 border-white"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          })}
+        </div>
 
-              <div className="bg-white p-6 rounded-lg shadow">
-                <p className="font-semibold mb-4">Complete the paragraph using the word bank. Click on a blank to select it (it will turn blue), then click a word to fill it:</p>
-                <div className="flex flex-wrap gap-2 mb-6 p-4 bg-gray-100 rounded">
-                  {activity1WordBank.map((word, idx) => {
-                    const usedCount = Object.values(activity1Answers).filter(w => w === word).length;
-                    const maxCount = activity1WordCounts[word];
-                    const canUse = usedCount < maxCount;
-                    
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          if (canUse && selectedBlank1) {
-                            setActivity1Answers({ ...activity1Answers, [selectedBlank1]: word });
-                            setSelectedBlank1(null);
-                          }
-                        }}
-                        className={`px-4 py-2 rounded transition ${
-                          !canUse ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-500 text-white hover:bg-purple-600'
-                        }`}
-                        disabled={activity1Checked || !canUse}
-                      >
-                        {word} {maxCount > 1 && `(${usedCount}/${maxCount})`}
-                      </button>
-                    );
-                  })}
-                </div>
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => {
+              setActivity1Answers({ word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: '' });
+              setSelectedBlank1(null);
+            }}
+            disabled={activity1Checked || Object.values(activity1Answers).every(v => !v)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300 transition text-sm"
+          >
+            Clear All
+          </button>
+        </div>
 
-                <div className="flex gap-2 mb-4">
-                  <button
-                    onClick={() => {
-                      setActivity1Answers({ word1: '', word2: '', word3: '', word4: '', word5: '', word6: '', word7: '', word8: '', word9: '' });
-                      setSelectedBlank1(null);
-                    }}
-                    disabled={activity1Checked || Object.values(activity1Answers).every(v => !v)}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300 transition text-sm"
-                  >
-                    Clear All
-                  </button>
-                </div>
+        <div className="space-y-2 text-lg leading-relaxed">
+          <p>
+            An <input
+              type="text"
+              value={activity1Answers.word1}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word1) {
+                    setActivity1Answers({ ...activity1Answers, word1: '' });
+                  } else {
+                    setSelectedBlank1('word1');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word1' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (activity1Answers.word1 === 'atom' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            /> is the very smallest part of everything in the universe, and it's made of three parts: <input
+              type="text"
+              value={activity1Answers.word2}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word2) {
+                    setActivity1Answers({ ...activity1Answers, word2: '' });
+                  } else {
+                    setSelectedBlank1('word2');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word2' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (['protons', 'neutrons', 'electrons'].includes(activity1Answers.word2) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            />, <input
+              type="text"
+              value={activity1Answers.word3}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word3) {
+                    setActivity1Answers({ ...activity1Answers, word3: '' });
+                  } else {
+                    setSelectedBlank1('word3');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word3' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (['protons', 'neutrons', 'electrons'].includes(activity1Answers.word3) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            />, and <input
+              type="text"
+              value={activity1Answers.word4}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word4) {
+                    setActivity1Answers({ ...activity1Answers, word4: '' });
+                  } else {
+                    setSelectedBlank1('word4');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word4' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (['protons', 'neutrons', 'electrons'].includes(activity1Answers.word4) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            />.
+          </p>
+          <p className="mt-3">
+            In the nucleus, <input
+              type="text"
+              value={activity1Answers.word5}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word5) {
+                    setActivity1Answers({ ...activity1Answers, word5: '' });
+                  } else {
+                    setSelectedBlank1('word5');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word5' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (['protons', 'neutrons'].includes(activity1Answers.word5) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            /> and <input
+              type="text"
+              value={activity1Answers.word6}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word6) {
+                    setActivity1Answers({ ...activity1Answers, word6: '' });
+                  } else {
+                    setSelectedBlank1('word6');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word6' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (['protons', 'neutrons'].includes(activity1Answers.word6) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            /> are in the centre of the <input
+              type="text"
+              value={activity1Answers.word7}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word7) {
+                    setActivity1Answers({ ...activity1Answers, word7: '' });
+                  } else {
+                    setSelectedBlank1('word7');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word7' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (activity1Answers.word7 === 'atom' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            />, while <input
+              type="text"
+              value={activity1Answers.word8}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word8) {
+                    setActivity1Answers({ ...activity1Answers, word8: '' });
+                  } else {
+                    setSelectedBlank1('word8');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word8' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (activity1Answers.word8 === 'electrons' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            /> spin around the nucleus in shells.
+          </p>
+          <p className="mt-3">
+            <input
+              type="text"
+              value={activity1Answers.word9}
+              onClick={() => {
+                if (!activity1Checked) {
+                  if (activity1Answers.word9) {
+                    setActivity1Answers({ ...activity1Answers, word9: '' });
+                  } else {
+                    setSelectedBlank1('word9');
+                  }
+                }
+              }}
+              className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
+                selectedBlank1 === 'word9' ? 'border-blue-500 bg-blue-100' :
+                activity1Checked ? (activity1Answers.word9 === 'Atoms' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
+              }`}
+              disabled={activity1Checked}
+              readOnly
+            /> can join together to make things like water or even people.
+          </p>
+        </div>
 
-                <div className="space-y-2 text-lg leading-relaxed">
-                  <p>
-                    An <input
-                      type="text"
-                      value={activity1Answers.word1}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word1) {
-                            setActivity1Answers({ ...activity1Answers, word1: '' });
-                          } else {
-                            setSelectedBlank1('word1');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word1' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (activity1Answers.word1 === 'atom' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    /> is the very smallest part of everything in the universe, and it's made of three parts: <input
-                      type="text"
-                      value={activity1Answers.word2}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word2) {
-                            setActivity1Answers({ ...activity1Answers, word2: '' });
-                          } else {
-                            setSelectedBlank1('word2');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word2' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (['protons', 'neutrons', 'electrons'].includes(activity1Answers.word2) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    />, <input
-                      type="text"
-                      value={activity1Answers.word3}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word3) {
-                            setActivity1Answers({ ...activity1Answers, word3: '' });
-                          } else {
-                            setSelectedBlank1('word3');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word3' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (['protons', 'neutrons', 'electrons'].includes(activity1Answers.word3) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    />, and <input
-                      type="text"
-                      value={activity1Answers.word4}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word4) {
-                            setActivity1Answers({ ...activity1Answers, word4: '' });
-                          } else {
-                            setSelectedBlank1('word4');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word4' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (['protons', 'neutrons', 'electrons'].includes(activity1Answers.word4) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    />.
-                  </p>
-                  <p className="mt-3">
-                    In the nucleus, <input
-                      type="text"
-                      value={activity1Answers.word5}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word5) {
-                            setActivity1Answers({ ...activity1Answers, word5: '' });
-                          } else {
-                            setSelectedBlank1('word5');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word5' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (['protons', 'neutrons'].includes(activity1Answers.word5) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    /> and <input
-                      type="text"
-                      value={activity1Answers.word6}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word6) {
-                            setActivity1Answers({ ...activity1Answers, word6: '' });
-                          } else {
-                            setSelectedBlank1('word6');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word6' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (['protons', 'neutrons'].includes(activity1Answers.word6) ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    /> are in the centre of the <input
-                      type="text"
-                      value={activity1Answers.word7}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word7) {
-                            setActivity1Answers({ ...activity1Answers, word7: '' });
-                          } else {
-                            setSelectedBlank1('word7');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word7' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (activity1Answers.word7 === 'atom' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    />, while <input
-                      type="text"
-                      value={activity1Answers.word8}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word8) {
-                            setActivity1Answers({ ...activity1Answers, word8: '' });
-                          } else {
-                            setSelectedBlank1('word8');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word8' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (activity1Answers.word8 === 'electrons' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    /> spin around the nucleus in shells.
-                  </p>
-                  <p className="mt-3">
-                    <input
-                      type="text"
-                      value={activity1Answers.word9}
-                      onClick={() => {
-                        if (!activity1Checked) {
-                          if (activity1Answers.word9) {
-                            setActivity1Answers({ ...activity1Answers, word9: '' });
-                          } else {
-                            setSelectedBlank1('word9');
-                          }
-                        }
-                      }}
-                      className={`inline-block w-32 px-2 py-1 border-b-2 text-center cursor-pointer ${
-                        selectedBlank1 === 'word9' ? 'border-blue-500 bg-blue-100' :
-                        activity1Checked ? (activity1Answers.word9 === 'Atoms' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'
-                      }`}
-                      disabled={activity1Checked}
-                      readOnly
-                    /> can join together to make things like water or even people.
-                  </p>
-                </div>
-
-                {!activity1Checked ? (
-                  <button
-                    onClick={checkActivity1}
-                    className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    Check Answers
-                  </button>
-                ) : (
-                  <div className="mt-6 space-y-4">
-                    <div className={`p-4 rounded-lg ${activity1Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xl font-bold">{activity1Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
-                          <p className="text-lg">Your Score: {activity1Score}%</p>
-                          {activity1Score < 75 && (
-                            <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
-                          )}
-                        </div>
-                        {activity1Score >= 75 ? (
-                          <lucide-react icon="check-circle" size={48} className="text-green-600" />
-                        ) : (
-                          <lucide-react icon="x-circle" size={48} className="text-orange-600" />
-                        )}
-                      </div>
-                    </div>
-                    {activity1Score < 75 && (
-                      <button
-                        onClick={retryActivity1}
-                        className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-                      >
-                        <lucide-react icon="refresh-cw" size={20} />
-                        Try Again
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>,// Activity 2
-            <div key="act2" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 2: Positive and negative charge
-              </h2>
-              
-              <p className="text-gray-700">Match each particle with its electrical charge:</p>
-
-              <div className="bg-white p-6 rounded-lg shadow space-y-4">
-                <div className="flex items-center gap-4">
-                  <span className="font-semibold w-64">a. Positive (+) electrical charge is carried by:</span>
-                  <select
-                    value={activity2Answers.a}
-                    onChange={(e) => setActivity2Answers({ ...activity2Answers, a: e.target.value })}
-                    className={`flex-1 p-2 border-2 rounded ${activity2Checked ? (activity2Answers.a === activity2Correct.a ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
-                    disabled={activity2Checked}
-                  >
-                    <option value="">Choose...</option>
-                    <option value="protons">protons</option>
-                    <option value="electrons">electrons</option>
-                    <option value="neutrons">neutrons</option>
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="font-semibold w-64">b. Negative (-) electrical charge is carried by:</span>
-                  <select
-                    value={activity2Answers.b}
-                    onChange={(e) => setActivity2Answers({ ...activity2Answers, b: e.target.value })}
-                    className={`flex-1 p-2 border-2 rounded ${activity2Checked ? (activity2Answers.b === activity2Correct.b ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
-                    disabled={activity2Checked}
-                  >
-                    <option value="">Choose...</option>
-                    <option value="protons">protons</option>
-                    <option value="electrons">electrons</option>
-                    <option value="neutrons">neutrons</option>
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="font-semibold w-64">c. ________ carry no electrical charge:</span>
-                  <select
-                    value={activity2Answers.c}
-                    onChange={(e) => setActivity2Answers({ ...activity2Answers, c: e.target.value })}
-                    className={`flex-1 p-2 border-2 rounded ${activity2Checked ? (activity2Answers.c === activity2Correct.c ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
-                    disabled={activity2Checked}
-                  >
-                    <option value="">Choose...</option>
-                    <option value="Protons">Protons</option>
-                    <option value="Electrons">Electrons</option>
-                    <option value="Neutrons">Neutrons</option>
-                  </select>
-                </div>
-
-                {!activity2Checked ? (
-                  <button
-                    onClick={checkActivity2}
-                    className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    Check Answers
-                  </button>
-                ) : (
-                  <div className="mt-6 space-y-4">
-                    <div className={`p-4 rounded-lg ${activity2Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xl font-bold">{activity2Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
-                          <p className="text-lg">Your Score: {activity2Score}%</p>
-                          {activity2Score < 75 && (
-                            <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {activity2Score < 75 && (
-                      <button
-                        onClick={retryActivity2}
-                        className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-                      >
-                        <lucide-react icon="refresh-cw" size={20} />
-                        Try Again
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>,// Activity 3 - Reading A
-            <div key="act3" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 3: Reading A
-              </h2>
-              
-              <p className="text-gray-700">Choose the correct words in the passages below. Click on the word you think is correct.</p>
-
-              <div className="bg-white p-6 rounded-lg shadow space-y-8">
-                <div className="space-y-4">
-                  <h3 className="font-bold text-lg text-purple-600">Paragraph 1:</h3>
-                  <p className="text-lg leading-relaxed bg-blue-50 p-4 rounded-lg">
-                    <span>
-                      {activity3Questions[0].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 1: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[1] === opt ? (activity3Checked ? (opt === activity3Questions[0].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' is the flow of very small things called '}
-                    <span>
-                      {activity3Questions[1].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 2: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[2] === opt ? (activity3Checked ? (opt === activity3Questions[1].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {'. It can also mean the '}
-                    <span>
-                      {activity3Questions[2].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 3: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[3] === opt ? (activity3Checked ? (opt === activity3Questions[2].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' you get when electrons '}
-                    <span>
-                      {activity3Questions[3].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 4: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[4] === opt ? (activity3Checked ? (opt === activity3Questions[3].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' from place to place. We can see '}
-                    <span>
-                      {activity3Questions[4].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 5: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[5] === opt ? (activity3Checked ? (opt === activity3Questions[4].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' in nature when there is a bolt of '}
-                    <span>
-                      {activity3Questions[5].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 6: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[6] === opt ? (activity3Checked ? (opt === activity3Questions[5].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' in the sky. This is just a large number of '}
-                    <span>
-                      {activity3Questions[6].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 7: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[7] === opt ? (activity3Checked ? (opt === activity3Questions[6].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' moving through air at the same time, making a huge amount of '}
-                    <span>
-                      {activity3Questions[7].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 8: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[8] === opt ? (activity3Checked ? (opt === activity3Questions[7].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {'. Scientists have also learned how to '}
-                    <span>
-                      {activity3Questions[8].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 9: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[9] === opt ? (activity3Checked ? (opt === activity3Questions[8].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {', or make, electricity. This can be controlled and sent through '}
-                    <span>
-                      {activity3Questions[9].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 10: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[10] === opt ? (activity3Checked ? (opt === activity3Questions[9].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {'. It can then '}
-                    <span>
-                      {activity3Questions[10].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 11: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[11] === opt ? (activity3Checked ? (opt === activity3Questions[10].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' such things as heaters, light bulbs, and computers. Today, electricity '}
-                    <span>
-                      {activity3Questions[11].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 12: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[12] === opt ? (activity3Checked ? (opt === activity3Questions[11].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' most of the energy to run the modern world.'}
-                  </p>
-                </div><div className="space-y-4">
-                  <h3 className="font-bold text-lg text-purple-600">Paragraph 2:</h3>
-                  <p className="text-lg leading-relaxed bg-green-50 p-4 rounded-lg">
-                    Everything in the{' '}
-                    <span>
-                      {activity3Questions[12].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 13: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[13] === opt ? (activity3Checked ? (opt === activity3Questions[12].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' is made of tiny objects called '}
-                    <span>
-                      {activity3Questions[13].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 14: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[14] === opt ? (activity3Checked ? (opt === activity3Questions[13].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {'. Each one has even smaller particles called protons and electrons. An electron has what is called a '}
-                    <span>
-                      {activity3Questions[14].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 15: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[15] === opt ? (activity3Checked ? (opt === activity3Questions[14].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' charge. A proton has a positive '}
-                    <span>
-                      {activity3Questions[15].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 16: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[16] === opt ? (activity3Checked ? (opt === activity3Questions[15].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {'. Negative and '}
-                    <span>
-                      {activity3Questions[16].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 17: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[17] === opt ? (activity3Checked ? (opt === activity3Questions[16].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' charges try to pull each other together. However, two positive, or two negative '}
-                    <span>
-                      {activity3Questions[17].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 18: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[18] === opt ? (activity3Checked ? (opt === activity3Questions[17].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {', will push each other away. '}
-                    <span>
-                      {activity3Questions[18].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 19: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[19] === opt ? (activity3Checked ? (opt === activity3Questions[18].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' results when '}
-                    <span>
-                      {activity3Questions[19].options.map(opt => (
-                        <button
-                          key={opt}
-                          onClick={() => setActivity3Answers({ ...activity3Answers, 20: opt })}
-                          className={`mx-1 px-2 py-1 rounded ${activity3Answers[20] === opt ? (activity3Checked ? (opt === activity3Questions[19].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
-                          disabled={activity3Checked}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </span>
-                    {' are pushed and pulled from atom to atom.'}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">
-                    Answered: {Object.keys(activity3Answers).length} / 20
-                  </span>
-                </div>
-
-                {!activity3Checked ? (
-                  <button
-                    onClick={checkActivity3}
-                    className="mt-4 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    Check Answers
-                  </button>
-                ) : (
-                  <div className="mt-4 space-y-4">
-                    <div className={`p-4 rounded-lg ${activity3Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xl font-bold">{activity3Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
-                          <p className="text-lg">Your Score: {activity3Score}%</p>
-                          {activity3Score < 75 && (
-                            <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {activity3Score < 75 && (
-                      <button
-                        onClick={retryActivity3}
-                        className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-                      >
-                        <lucide-react icon="refresh-cw" size={20} />
-                        Try Again
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>,// Activity 4 - Vocabulary + Fill in blanks
-            <div key="act4" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 4: Vocabulary & Complete Paragraph 3
-              </h2>
-
-              <p className="text-gray-700">First, study the vocabulary flashcards. Then complete the paragraph using the word bank.</p>
-
-              {showFlashcards && (
-                <div className="bg-white p-6 rounded-lg shadow">
-                  <h3 className="font-bold text-lg mb-4">Study these vocabulary flashcards (click to flip):</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    {vocabularyCards.map((card, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => setFlippedCards({ ...flippedCards, [idx]: !flippedCards[idx] })}
-                        className="cursor-pointer h-48"
-                        style={{ perspective: '1000px' }}
-                      >
-                        <div 
-                          className="relative w-full h-full transition-transform duration-500"
-                          style={{ 
-                            transformStyle: 'preserve-3d',
-                            transform: flippedCards[idx] ? 'rotateY(180deg)' : 'rotateY(0deg)'
-                          }}
-                        >
-                          <div 
-                            className="absolute w-full h-full bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg flex flex-col justify-center items-center"
-                            style={{ backfaceVisibility: 'hidden' }}
-                          >
-                            <p className="text-3xl font-bold mb-2">{card.word}</p>
-                            <p className="text-sm opacity-75">Click to see meaning</p>
-                          </div>
-                          
-                          <div 
-                            className="absolute w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg flex flex-col justify-center"
-                            style={{ 
-                              backfaceVisibility: 'hidden',
-                              transform: 'rotateY(180deg)'
-                            }}
-                          >
-                            <p className="text-2xl font-bold mb-3">{card.word}</p>
-                            <p className="text-base mb-2 italic">{card.meaning}</p>
-                            <p className="text-2xl font-bold border-t border-white/30 pt-2 mt-2">{card.arabic}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => setShowFlashcards(false)}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    Continue to Exercise
-                  </button>
-                </div>
-              )}{!showFlashcards && (
-                <div className="bg-white p-6 rounded-lg shadow space-y-4">
-                  <h3 className="font-bold text-lg">Word Bank:</h3>
-                  <p className="text-sm text-gray-600 italic">Click on a blank to select it (it will turn blue), then click a word to fill it. Click a filled blank to remove the word.</p>
-                  
-                  <div className="flex flex-wrap gap-2 p-4 bg-gray-100 rounded mb-4">
-                    {activity4WordBank.map((word, idx) => {
-                      const usedCount = Object.values(activity4Answers).filter(w => w === word).length;
-                      const maxCount = activity4WordCounts[word];
-                      const canUse = usedCount < maxCount;
-                      
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            if (canUse && selectedBlank4 !== null) {
-                              setActivity4Answers({ ...activity4Answers, [selectedBlank4]: word });
-                              setSelectedBlank4(null);
-                            }
-                          }}
-                          className={`px-3 py-2 rounded transition ${
-                            !canUse ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-500 text-white hover:bg-purple-600'
-                          }`}
-                          disabled={activity4Checked || !canUse}
-                        >
-                          {word} {maxCount > 1 && `(${usedCount}/${maxCount})`}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <div className="flex gap-2 mb-4">
-                    <button
-                      onClick={() => {
-                        setActivity4Answers({});
-                        setSelectedBlank4(null);
-                      }}
-                      disabled={activity4Checked || Object.keys(activity4Answers).length === 0}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300 transition text-sm"
-                    >
-                      Clear All
-                    </button>
-                  </div>
-
-                  <div className="bg-green-50 p-6 rounded-lg">
-                    <h3 className="font-bold text-lg mb-4">Paragraph 3: Generating electricity</h3>
-                    <div className="space-y-2 text-lg leading-relaxed">
-                      <p>
-                        Many moving electrons are called an electric {renderBlank(0)}. A city's {renderBlank(1)} plant produces a powerful electric {renderBlank(2)} and sends it through {renderBlank(3)}. The electricity used for lighting, heating, and running {renderBlank(4, 'w-32')} is made by machines called {renderBlank(5, 'w-32')}. These make a {renderBlank(6)} flow by moving a {renderBlank(7)} past a coil of {renderBlank(8)}, which pushes {renderBlank(9, 'w-28')} through the {renderBlank(10)} of the coil. More {renderBlank(11)} carry the {renderBlank(12)} to houses and other buildings. Even more of these connect to the power {renderBlank(13)} in rooms. When a person {renderBlank(14, 'w-28')} an iron or another electric {renderBlank(15)}, the {renderBlank(16)} travels into the {renderBlank(17)} and makes it work.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 flex-wrap">
-                    <button
-                      onClick={() => setShowFlashcards(true)}
-                      className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
-                    >
-                      Review Vocabulary Again
-                    </button>
-                    {!activity4Checked && (
-                      <button
-                        onClick={checkActivity4}
-                        className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                      >
-                        Check Answers
-                      </button>
-                    )}
-                  </div>
-
-                  {activity4Checked && (
-                    <div className="space-y-4">
-                      <div className={`p-4 rounded-lg ${activity4Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-xl font-bold">{activity4Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
-                            <p className="text-lg">Your Score: {activity4Score}%</p>
-                            {activity4Score < 75 && (
-                              <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      {activity4Score < 75 && (
-                        <button
-                          onClick={retryActivity4}
-                          className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-                        >
-                          <lucide-react icon="refresh-cw" size={20} />
-                          Try Again
-                        </button>
-                      )}
-                    </div>
+        {!activity1Checked ? (
+          <button
+            onClick={checkActivity1}
+            className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            Check Answers
+          </button>
+        ) : (
+          <div className="mt-6 space-y-4">
+            <div className={`p-4 rounded-lg ${activity1Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-bold">{activity1Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
+                  <p className="text-lg">Your Score: {activity1Score}%</p>
+                  {activity1Score < 75 && (
+                    <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
                   )}
                 </div>
-              )}
-            </div>,// Activity 5 - Complete Reading
-            <div key="act5" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 5: Complete Reading - Electric Current
-              </h2>
-
-              <p className="text-gray-700">Read the three complete paragraphs below. Then you will match headings to each paragraph in the next activity.</p>
-
-              <div className="bg-white p-6 rounded-lg shadow space-y-8">
-                <div className="space-y-4">
-                  <h3 className="font-bold text-xl text-purple-600">Paragraph 1</h3>
-                  <div className="bg-blue-50 p-6 rounded-lg">
-                    <p className="text-lg leading-relaxed">
-                      Electricity is the flow of very small things called electrons. It can also mean the energy you get when electrons flow from place to place. We can see electricity in nature when there is a bolt of lightning in the sky. This is just a large number of electrons moving through air at the same time, making a huge amount of energy. Scientists have also learned how to generate, or make, electricity. This can be controlled and sent through wires. It can then power such things as heaters, light bulbs, and computers. Today, electricity provides most of the energy to run the modern world.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-bold text-xl text-purple-600">Paragraph 2</h3>
-                  <div className="bg-green-50 p-6 rounded-lg">
-                    <p className="text-lg leading-relaxed">
-                      Everything in the universe is made of tiny objects called atoms. Each one has even smaller particles called protons and electrons. An electron has what is called a negative charge. A proton has a positive charge. Negative and positive charges try to pull each other together. However, two positive, or two negative charges, will push each other away. Electricity results when electrons are pushed and pulled from atom to atom.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-bold text-xl text-purple-600">Paragraph 3</h3>
-                  <div className="bg-orange-50 p-6 rounded-lg">
-                    <p className="text-lg leading-relaxed">
-                      Many moving electrons are called an electric current. A city's power plant produces a powerful electric current and sends it through wires. The electricity used for lighting, heating, and running appliances is made by machines called generators. These make a current flow by moving a magnet past a coil of wire, which pushes electrons through the wire of the coil. More wires carry the current to houses and other buildings. Even more of these connect to the power outlets in rooms. When a person plugs in an iron or another electric device, the current travels into the device and makes it work.
-                    </p>
-                  </div>
-                </div>
-
-                {!activity5Checked ? (
-                  <button
-                    onClick={checkActivity5}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    I've Read All Paragraphs - Continue
-                  </button>
+                {activity1Score >= 75 ? (
+                  <CheckCircle size={48} className="text-green-600" />
                 ) : (
-                  <div className="p-4 rounded-lg bg-green-100 border-2 border-green-500">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xl font-bold">✓ Reading Complete!</p>
-                        <p className="text-lg">+50 bonus points - Now proceed to the next activity!</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>,// Activity 6 - Matching Headings
-            <div key="act6" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 6: Matching Headings
-              </h2>
-              
-              <p className="text-gray-700">Match each heading to the correct paragraph:</p>
-
-              <div className="bg-white p-6 rounded-lg shadow space-y-6">
-                <div className="flex flex-wrap gap-3 p-4 bg-purple-50 rounded mb-4">
-                  {activity6Headings.map((heading, idx) => (
-                    <div
-                      key={idx}
-                      className="px-4 py-3 bg-purple-500 text-white rounded-lg font-semibold"
-                    >
-                      {heading}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-4">
-                  <div className="border-2 border-purple-200 p-4 rounded-lg">
-                    <h3 className="font-bold mb-2">Paragraph 1:</h3>
-                    <p className="text-sm text-gray-600 mb-3">Electricity is the flow of very small things called electrons...</p>
-                    <select
-                      value={activity6Answers.para1}
-                      onChange={(e) => setActivity6Answers({ ...activity6Answers, para1: e.target.value })}
-                      className={`w-full p-3 border-2 rounded ${activity6Checked ? (activity6Answers.para1 === activity6Correct.para1 ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
-                      disabled={activity6Checked}
-                    >
-                      <option value="">Select heading...</option>
-                      {activity6Headings.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-
-                  <div className="border-2 border-purple-200 p-4 rounded-lg">
-                    <h3 className="font-bold mb-2">Paragraph 2:</h3>
-                    <p className="text-sm text-gray-600 mb-3">Everything in the universe is made of tiny objects called atoms...</p>
-                    <select
-                      value={activity6Answers.para2}
-                      onChange={(e) => setActivity6Answers({ ...activity6Answers, para2: e.target.value })}
-                      className={`w-full p-3 border-2 rounded ${activity6Checked ? (activity6Answers.para2 === activity6Correct.para2 ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
-                      disabled={activity6Checked}
-                    >
-                      <option value="">Select heading...</option>
-                      {activity6Headings.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-
-                  <div className="border-2 border-purple-200 p-4 rounded-lg">
-                    <h3 className="font-bold mb-2">Paragraph 3:</h3>
-                    <p className="text-sm text-gray-600 mb-3">Many moving electrons are called an electric current...</p>
-                    <select
-                      value={activity6Answers.para3}
-                      onChange={(e) => setActivity6Answers({ ...activity6Answers, para3: e.target.value })}
-                      className={`w-full p-3 border-2 rounded ${activity6Checked ? (activity6Answers.para3 === activity6Correct.para3 ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
-                      disabled={activity6Checked}
-                    >
-                      <option value="">Select heading...</option>
-                      {activity6Headings.map(h => <option key={h} value={h}>{h}</option>)}
-                    </select>
-                  </div>
-                </div>
-
-                {!activity6Checked ? (
-                  <button
-                    onClick={checkActivity6}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    Check Answers
-                  </button>
-                ) : (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg ${activity6Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xl font-bold">{activity6Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
-                          <p className="text-lg">Your Score: {activity6Score}%</p>
-                          {activity6Score < 75 && (
-                            <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {activity6Score < 75 && (
-                      <button
-                        onClick={retryActivity6}
-                        className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-                      >
-                        <lucide-react icon="refresh-cw" size={20} />
-                        Try Again
-                      </button>
-                    )}
-                  </div>
+                  <XCircle size={48} className="text-orange-600" />
                 )}
               </div>
             </div>
-          ];// Add Activity 7 after the main activities array
-          activities.push(
-            // Activity 7 - Reading Comprehension
-            <div key="act7" className="space-y-6">
-              <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                <lucide-react icon="zap" className="text-yellow-500" />
-                Activity 7: Reading Comprehension
-              </h2>
+            {activity1Score < 75 && (
+              <button
+                onClick={retryActivity1}
+                className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <RefreshCw size={20} />
+                Try Again
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>,
+
+    // Activity 2
+    <div key="act2" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 2: Positive and negative charge
+      </h2>
+      
+      <p className="text-gray-700">Match each particle with its electrical charge:</p>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <div className="flex items-center gap-4">
+          <span className="font-semibold w-64">a. Positive (+) electrical charge is carried by:</span>
+          <select
+            value={activity2Answers.a}
+            onChange={(e) => setActivity2Answers({ ...activity2Answers, a: e.target.value })}
+            className={`flex-1 p-2 border-2 rounded ${activity2Checked ? (activity2Answers.a === activity2Correct.a ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
+            disabled={activity2Checked}
+          >
+            <option value="">Choose...</option>
+            <option value="protons">protons</option>
+            <option value="electrons">electrons</option>
+            <option value="neutrons">neutrons</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="font-semibold w-64">b. Negative (-) electrical charge is carried by:</span>
+          <select
+            value={activity2Answers.b}
+            onChange={(e) => setActivity2Answers({ ...activity2Answers, b: e.target.value })}
+            className={`flex-1 p-2 border-2 rounded ${activity2Checked ? (activity2Answers.b === activity2Correct.b ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
+            disabled={activity2Checked}
+          >
+            <option value="">Choose...</option>
+            <option value="protons">protons</option>
+            <option value="electrons">electrons</option>
+            <option value="neutrons">neutrons</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="font-semibold w-64">c. ________ carry no electrical charge:</span>
+          <select
+            value={activity2Answers.c}
+            onChange={(e) => setActivity2Answers({ ...activity2Answers, c: e.target.value })}
+            className={`flex-1 p-2 border-2 rounded ${activity2Checked ? (activity2Answers.c === activity2Correct.c ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
+            disabled={activity2Checked}
+          >
+            <option value="">Choose...</option>
+            <option value="Protons">Protons</option>
+            <option value="Electrons">Electrons</option>
+            <option value="Neutrons">Neutrons</option>
+          </select>
+        </div>
+
+        {!activity2Checked ? (
+          <button
+            onClick={checkActivity2}
+            className="mt-6 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            Check Answers
+          </button>
+        ) : (
+          <div className="mt-6 space-y-4">
+            <div className={`p-4 rounded-lg ${activity2Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-bold">{activity2Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
+                  <p className="text-lg">Your Score: {activity2Score}%</p>
+                  {activity2Score < 75 && (
+                    <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
+                  )}
+                </div>
+                {activity2Score >= 75 ? (
+                  <CheckCircle size={48} className="text-green-600" />
+                ) : (
+                  <XCircle size={48} className="text-orange-600" />
+                )}
+              </div>
+            </div>
+            {activity2Score < 75 && (
+              <button
+                onClick={retryActivity2}
+                className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <RefreshCw size={20} />
+                Try Again
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>,
+
+    // Activity 3 - Reading A
+    <div key="act3" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 3: Reading A
+      </h2>
+      
+      <p className="text-gray-700">Choose the correct words in the passages below. Click on the word you think is correct.</p>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-8">
+        <div className="space-y-4">
+          <h3 className="font-bold text-lg text-purple-600">Paragraph 1:</h3>
+          <p className="text-lg leading-relaxed bg-blue-50 p-4 rounded-lg">
+            <span>
+              {activity3Questions[0].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 1: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[1] === opt ? (activity3Checked ? (opt === activity3Questions[0].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' is the flow of very small things called '}
+            <span>
+              {activity3Questions[1].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 2: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[2] === opt ? (activity3Checked ? (opt === activity3Questions[1].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {'. It can also mean the '}
+            <span>
+              {activity3Questions[2].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 3: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[3] === opt ? (activity3Checked ? (opt === activity3Questions[2].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' you get when electrons '}
+            <span>
+              {activity3Questions[3].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 4: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[4] === opt ? (activity3Checked ? (opt === activity3Questions[3].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' from place to place. We can see '}
+            <span>
+              {activity3Questions[4].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 5: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[5] === opt ? (activity3Checked ? (opt === activity3Questions[4].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' in nature when there is a bolt of '}
+            <span>
+              {activity3Questions[5].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 6: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[6] === opt ? (activity3Checked ? (opt === activity3Questions[5].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' in the sky. This is just a large number of '}
+            <span>
+              {activity3Questions[6].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 7: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[7] === opt ? (activity3Checked ? (opt === activity3Questions[6].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' moving through air at the same time, making a huge amount of '}
+            <span>
+              {activity3Questions[7].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 8: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[8] === opt ? (activity3Checked ? (opt === activity3Questions[7].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {'. Scientists have also learned how to '}
+            <span>
+              {activity3Questions[8].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 9: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[9] === opt ? (activity3Checked ? (opt === activity3Questions[8].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {', or make, electricity. This can be controlled and sent through '}
+            <span>
+              {activity3Questions[9].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 10: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[10] === opt ? (activity3Checked ? (opt === activity3Questions[9].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {'. It can then '}
+            <span>
+              {activity3Questions[10].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 11: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[11] === opt ? (activity3Checked ? (opt === activity3Questions[10].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' such things as heaters, light bulbs, and computers. Today, electricity '}
+            <span>
+              {activity3Questions[11].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 12: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[12] === opt ? (activity3Checked ? (opt === activity3Questions[11].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' most of the energy to run the modern world.'}
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="font-bold text-lg text-purple-600">Paragraph 2:</h3>
+          <p className="text-lg leading-relaxed bg-green-50 p-4 rounded-lg">
+            Everything in the{' '}
+            <span>
+              {activity3Questions[12].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 13: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[13] === opt ? (activity3Checked ? (opt === activity3Questions[12].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' is made of tiny objects called '}
+            <span>
+              {activity3Questions[13].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 14: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[14] === opt ? (activity3Checked ? (opt === activity3Questions[13].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {'. Each one has even smaller particles called protons and electrons. An electron has what is called a '}
+            <span>
+              {activity3Questions[14].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 15: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[15] === opt ? (activity3Checked ? (opt === activity3Questions[14].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' charge. A proton has a positive '}
+            <span>
+              {activity3Questions[15].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 16: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[16] === opt ? (activity3Checked ? (opt === activity3Questions[15].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {'. Negative and '}
+            <span>
+              {activity3Questions[16].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 17: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[17] === opt ? (activity3Checked ? (opt === activity3Questions[16].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' charges try to pull each other together. However, two positive, or two negative '}
+            <span>
+              {activity3Questions[17].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 18: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[18] === opt ? (activity3Checked ? (opt === activity3Questions[17].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {', will push each other away. '}
+            <span>
+              {activity3Questions[18].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 19: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[19] === opt ? (activity3Checked ? (opt === activity3Questions[18].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' results when '}
+            <span>
+              {activity3Questions[19].options.map(opt => (
+                <button
+                  key={opt}
+                  onClick={() => setActivity3Answers({ ...activity3Answers, 20: opt })}
+                  className={`mx-1 px-2 py-1 rounded ${activity3Answers[20] === opt ? (activity3Checked ? (opt === activity3Questions[19].correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-purple-500 text-white') : 'bg-gray-200 hover:bg-gray-300'} transition`}
+                  disabled={activity3Checked}
+                >
+                  {opt}
+                </button>
+              ))}
+            </span>
+            {' are pushed and pulled from atom to atom.'}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-gray-600">
+            Answered: {Object.keys(activity3Answers).length} / 20
+          </span>
+        </div>
+
+        {!activity3Checked ? (
+          <button
+            onClick={checkActivity3}
+            className="mt-4 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            Check Answers
+          </button>
+        ) : (
+          <div className="mt-4 space-y-4">
+            <div className={`p-4 rounded-lg ${activity3Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-bold">{activity3Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
+                  <p className="text-lg">Your Score: {activity3Score}%</p>
+                  {activity3Score < 75 && (
+                    <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
+                  )}
+                </div>
+                {activity3Score >= 75 ? (
+                  <CheckCircle size={48} className="text-green-600" />
+                ) : (
+                  <XCircle size={48} className="text-orange-600" />
+                )}
+              </div>
+            </div>
+            {activity3Score < 75 && (
+              <button
+                onClick={retryActivity3}
+                className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <RefreshCw size={20} />
+                Try Again
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>,
+
+    // Activity 4 - Vocabulary + Fill in blanks
+    <div key="act4" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 4: Vocabulary & Complete Paragraph 3
+      </h2>
+
+      <p className="text-gray-700">First, study the vocabulary flashcards. Then complete the paragraph using the word bank.</p>
+
+      {showFlashcards && (
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="font-bold text-lg mb-4">Study these vocabulary flashcards (click to flip):</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {vocabularyCards.map((card, idx) => (
+              <div
+                key={idx}
+                onClick={() => setFlippedCards({ ...flippedCards, [idx]: !flippedCards[idx] })}
+                className="cursor-pointer h-48"
+                style={{ perspective: '1000px' }}
+              >
+                <div 
+                  className="relative w-full h-full transition-transform duration-500"
+                  style={{ 
+                    transformStyle: 'preserve-3d',
+                    transform: flippedCards[idx] ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                  }}
+                >
+                  <div 
+                    className="absolute w-full h-full bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg flex flex-col justify-center items-center"
+                    style={{ backfaceVisibility: 'hidden' }}
+                  >
+                    <p className="text-3xl font-bold mb-2">{card.word}</p>
+                    <p className="text-sm opacity-75">Click to see meaning</p>
+                  </div>
+                  
+                  <div 
+                    className="absolute w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg flex flex-col justify-center"
+                    style={{ 
+                      backfaceVisibility: 'hidden',
+                      transform: 'rotateY(180deg)'
+                    }}
+                  >
+                    <p className="text-2xl font-bold mb-3">{card.word}</p>
+                    <p className="text-base mb-2 italic">{card.meaning}</p>
+                    <p className="text-2xl font-bold border-t border-white/30 pt-2 mt-2">{card.arabic}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => setShowFlashcards(false)}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            Continue to Exercise
+          </button>
+        </div>
+      )}
+
+      {!showFlashcards && (
+        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+          <h3 className="font-bold text-lg">Word Bank:</h3>
+          <p className="text-sm text-gray-600 italic">Click on a blank to select it (it will turn blue), then click a word to fill it. Click a filled blank to remove the word.</p>
+          
+          <div className="flex flex-wrap gap-2 p-4 bg-gray-100 rounded mb-4">
+            {activity4WordBank.map((word, idx) => {
+              const usedCount = Object.values(activity4Answers).filter(w => w === word).length;
+              const maxCount = activity4WordCounts[word];
+              const canUse = usedCount < maxCount;
               
-              <p className="text-gray-700">Read the paragraph below and answer the multiple choice questions:</p>
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (canUse && selectedBlank4 !== null) {
+                      setActivity4Answers({ ...activity4Answers, [selectedBlank4]: word });
+                      setSelectedBlank4(null);
+                    }
+                  }}
+                  className={`px-3 py-2 rounded transition ${
+                    !canUse ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-500 text-white hover:bg-purple-600'
+                  }`}
+                  disabled={activity4Checked || !canUse}
+                >
+                  {word} {maxCount > 1 && `(${usedCount}/${maxCount})`}
+                </button>
+              );
+            })}
+          </div>
 
-              <div className="bg-white p-6 rounded-lg shadow space-y-6">
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <h3 className="font-bold text-lg text-purple-600 mb-4">Paragraph 1: What is electricity?</h3>
-                  <p className="text-lg leading-relaxed">
-                    Electricity is the flow of very small things called electrons. It can also mean the energy you get when electrons flow from place to place. We can see electricity in nature when there is a bolt of lightning in the sky. This is just a large number of electrons moving through air at the same time, making a huge amount of energy. Scientists have also learned how to generate, or make, electricity. This can be controlled and sent through wires. It can then power such things as heaters, light bulbs, and computers. Today, electricity provides most of the energy to run the modern world.
-                  </p>
-                </div>
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => {
+                setActivity4Answers({});
+                setSelectedBlank4(null);
+              }}
+              disabled={activity4Checked || Object.keys(activity4Answers).length === 0}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300 transition text-sm"
+            >
+              Clear All
+            </button>
+          </div>
 
-                <div className="space-y-6">
-                  {activity7Questions.map((q) => (
-                    <div key={q.id} className="border-2 border-purple-200 p-4 rounded-lg">
-                      <p className="font-semibold mb-3 text-lg">{q.id}. {q.question}</p>
-                      <div className="space-y-2">
-                        {q.options.map((option) => (
-                          <label
-                            key={option}
-                            className={`flex items-center p-3 rounded-lg cursor-pointer transition ${
-                              activity7Answers[q.id] === option
-                                ? activity7Checked
-                                  ? option === q.correct
-                                    ? 'bg-green-100 border-2 border-green-500'
-                                    : 'bg-red-100 border-2 border-red-500'
-                                  : 'bg-purple-100 border-2 border-purple-500'
-                                : 'bg-gray-50 hover:bg-gray-100 border-2 border-gray-200'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name={`question${q.id}`}
-                              value={option}
-                              checked={activity7Answers[q.id] === option}
-                              onChange={() => setActivity7Answers({ ...activity7Answers, [q.id]: option })}
-                              disabled={activity7Checked}
-                              className="mr-3"
-                            />
-                            <span className="text-base">{option}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          <div className="bg-green-50 p-6 rounded-lg">
+            <h3 className="font-bold text-lg mb-4">Paragraph 3: Generating electricity</h3>
+            <div className="space-y-2 text-lg leading-relaxed">
+              <p>
+                Many moving electrons are called an electric {renderBlank(0)}. A city's {renderBlank(1)} plant produces a powerful electric {renderBlank(2)} and sends it through {renderBlank(3)}. The electricity used for lighting, heating, and running {renderBlank(4, 'w-32')} is made by machines called {renderBlank(5, 'w-32')}. These make a {renderBlank(6)} flow by moving a {renderBlank(7)} past a coil of {renderBlank(8)}, which pushes {renderBlank(9, 'w-28')} through the {renderBlank(10)} of the coil. More {renderBlank(11)} carry the {renderBlank(12)} to houses and other buildings. Even more of these connect to the power {renderBlank(13)} in rooms. When a person {renderBlank(14, 'w-28')} an iron or another electric {renderBlank(15)}, the {renderBlank(16)} travels into the {renderBlank(17)} and makes it work.
+              </p>
+            </div>
+          </div>
 
+          <div className="flex gap-4 flex-wrap">
+            <button
+              onClick={() => setShowFlashcards(true)}
+              className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+            >
+              Review Vocabulary Again
+            </button>
+            {!activity4Checked && (
+              <button
+                onClick={checkActivity4}
+                className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              >
+                Check Answers
+              </button>
+            )}
+          </div>
+
+          {activity4Checked && (
+            <div className="space-y-4">
+              <div className={`p-4 rounded-lg ${activity4Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">
-                    Answered: {Object.keys(activity7Answers).length} / 5
-                  </span>
+                  <div>
+                    <p className="text-xl font-bold">{activity4Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
+                    <p className="text-lg">Your Score: {activity4Score}%</p>
+                    {activity4Score < 75 && (
+                      <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
+                    )}
+                  </div>
+                  {activity4Score >= 75 ? (
+                    <CheckCircle size={48} className="text-green-600" />
+                  ) : (
+                    <XCircle size={48} className="text-orange-600" />
+                  )}
                 </div>
+              </div>
+              {activity4Score < 75 && (
+                <button
+                  onClick={retryActivity4}
+                  className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+                >
+                  <RefreshCw size={20} />
+                  Try Again
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>,
 
-                {!activity7Checked ? (
-                  <button
-                    onClick={checkActivity7}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                  >
-                    Check Answers
-                  </button>
+    // Activity 5 - Complete Reading
+    <div key="act5" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 5: Complete Reading - Electric Current
+      </h2>
+
+      <p className="text-gray-700">Read the three complete paragraphs below. Then you will match headings to each paragraph in the next activity.</p>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-8">
+        <div className="space-y-4">
+          <h3 className="font-bold text-xl text-purple-600">Paragraph 1</h3>
+          <div className="bg-blue-50 p-6 rounded-lg">
+            <p className="text-lg leading-relaxed">
+              Electricity is the flow of very small things called electrons. It can also mean the energy you get when electrons flow from place to place. We can see electricity in nature when there is a bolt of lightning in the sky. This is just a large number of electrons moving through air at the same time, making a huge amount of energy. Scientists have also learned how to generate, or make, electricity. This can be controlled and sent through wires. It can then power such things as heaters, light bulbs, and computers. Today, electricity provides most of the energy to run the modern world.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="font-bold text-xl text-purple-600">Paragraph 2</h3>
+          <div className="bg-green-50 p-6 rounded-lg">
+            <p className="text-lg leading-relaxed">
+              Everything in the universe is made of tiny objects called atoms. Each one has even smaller particles called protons and electrons. An electron has what is called a negative charge. A proton has a positive charge. Negative and positive charges try to pull each other together. However, two positive, or two negative charges, will push each other away. Electricity results when electrons are pushed and pulled from atom to atom.
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="font-bold text-xl text-purple-600">Paragraph 3</h3>
+          <div className="bg-orange-50 p-6 rounded-lg">
+            <p className="text-lg leading-relaxed">
+              Many moving electrons are called an electric current. A city's power plant produces a powerful electric current and sends it through wires. The electricity used for lighting, heating, and running appliances is made by machines called generators. These make a current flow by moving a magnet past a coil of wire, which pushes electrons through the wire of the coil. More wires carry the current to houses and other buildings. Even more of these connect to the power outlets in rooms. When a person plugs in an iron or another electric device, the current travels into the device and makes it work.
+            </p>
+          </div>
+        </div>
+
+        {!activity5Checked ? (
+          <button
+            onClick={checkActivity5}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            I've Read All Paragraphs - Continue
+          </button>
+        ) : (
+          <div className="p-4 rounded-lg bg-green-100 border-2 border-green-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xl font-bold">✓ Reading Complete!</p>
+                <p className="text-lg">+50 bonus points - Now proceed to the next activity!</p>
+              </div>
+              <CheckCircle size={48} className="text-green-600" />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>,
+
+    // Activity 6 - Matching Headings
+    <div key="act6" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 6: Matching Headings
+      </h2>
+      
+      <p className="text-gray-700">Match each heading to the correct paragraph:</p>
+
+      <div className="bg-white p-6 rounded-lg shadow space-y-6">
+        <div className="flex flex-wrap gap-3 p-4 bg-purple-50 rounded mb-4">
+          {activity6Headings.map((heading, idx) => (
+            <div
+              key={idx}
+              className="px-4 py-3 bg-purple-500 text-white rounded-lg font-semibold"
+            >
+              {heading}
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          <div className="border-2 border-purple-200 p-4 rounded-lg">
+            <h3 className="font-bold mb-2">Paragraph 1:</h3>
+            <p className="text-sm text-gray-600 mb-3">Electricity is the flow of very small things called electrons...</p>
+            <select
+              value={activity6Answers.para1}
+              onChange={(e) => setActivity6Answers({ ...activity6Answers, para1: e.target.value })}
+              className={`w-full p-3 border-2 rounded ${activity6Checked ? (activity6Answers.para1 === activity6Correct.para1 ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
+              disabled={activity6Checked}
+            >
+              <option value="">Select heading...</option>
+              {activity6Headings.map(h => <option key={h} value={h}>{h}</option>)}
+            </select>
+          </div>
+
+          <div className="border-2 border-purple-200 p-4 rounded-lg">
+            <h3 className="font-bold mb-2">Paragraph 2:</h3>
+            <p className="text-sm text-gray-600 mb-3">Everything in the universe is made of tiny objects called atoms...</p>
+            <select
+              value={activity6Answers.para2}
+              onChange={(e) => setActivity6Answers({ ...activity6Answers, para2: e.target.value })}
+              className={`w-full p-3 border-2 rounded ${activity6Checked ? (activity6Answers.para2 === activity6Correct.para2 ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
+              disabled={activity6Checked}
+            >
+              <option value="">Select heading...</option>
+              {activity6Headings.map(h => <option key={h} value={h}>{h}</option>)}
+            </select>
+          </div>
+
+          <div className="border-2 border-purple-200 p-4 rounded-lg">
+            <h3 className="font-bold mb-2">Paragraph 3:</h3>
+            <p className="text-sm text-gray-600 mb-3">Many moving electrons are called an electric current...</p>
+            <select
+              value={activity6Answers.para3}
+              onChange={(e) => setActivity6Answers({ ...activity6Answers, para3: e.target.value })}
+              className={`w-full p-3 border-2 rounded ${activity6Checked ? (activity6Answers.para3 === activity6Correct.para3 ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') : 'border-purple-300'}`}
+              disabled={activity6Checked}
+            >
+              <option value="">Select heading...</option>
+              {activity6Headings.map(h => <option key={h} value={h}>{h}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {!activity6Checked ? (
+          <button
+            onClick={checkActivity6}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            Check Answers
+          </button>
+        ) : (
+          <div className="space-y-4">
+            <div className={`p-4 rounded-lg ${activity6Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-bold">{activity6Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
+                  <p className="text-lg">Your Score: {activity6Score}%</p>
+                  {activity6Score < 75 && (
+                    <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
+                  )}
+                </div>
+                {activity6Score >= 75 ? (
+                  <CheckCircle size={48} className="text-green-600" />
                 ) : (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg ${activity7Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xl font-bold">{activity7Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
-                          <p className="text-lg">Your Score: {activity7Score}%</p>
-                          {activity7Score < 75 && (
-                            <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    {activity7Score < 75 && (
-                      <button
-                        onClick={retryActivity7}
-                        className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-                      >
-                        <lucide-react icon="refresh-cw" size={20} />
-                        Try Again
-                      </button>
-                    )}
-                  </div>
+                  <XCircle size={48} className="text-orange-600" />
                 )}
               </div>
             </div>
-          );          // Return the main component JSX
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-8">
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h1 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
-                        <lucide-react icon="zap" className="text-yellow-500" size={36} />
-                        ESP 0103 - Electric Current - Reading 6
-                      </h1>
-                      <p className="text-sm text-gray-600 mt-1">Higher Colleges of Technology</p>
-                      <p className="text-xs text-gray-500">Designed by: Nazila Motahari</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-purple-600">{points} pts</div>
-                      <div className="text-sm text-gray-600">Total Points</div>
-                    </div>
-                  </div>
+            {activity6Score < 75 && (
+              <button
+                onClick={retryActivity6}
+                className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <RefreshCw size={20} />
+                Try Again
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  ];
 
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Progress</span>
-                      <span className="text-purple-600 font-semibold">{completedActivities.length}/7 Activities</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div
-                        className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
-                        style={{ width: `${progressPercentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
+  // Add Activity 7 after the main activities array is closed
+  activities.push(
+    // Activity 7 - Reading Comprehension
+    <div key="act7" className="space-y-6">
+      <h2 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+        <Zap className="text-yellow-500" />
+        Activity 7: Reading Comprehension
+      </h2>
+      
+      <p className="text-gray-700">Read the paragraph below and answer the multiple choice questions:</p>
 
-                  <div className="flex gap-2 flex-wrap">
-                    {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setCurrentActivity(num - 1)}
-                        className={`px-4 py-2 rounded-lg font-semibold transition ${
-                          currentActivity === num - 1
-                            ? 'bg-purple-600 text-white'
-                            : completedActivities.includes(num)
-                            ? 'bg-green-500 text-white'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                      >
-                        {completedActivities.includes(num) && '✓ '}
-                        Activity {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+      <div className="bg-white p-6 rounded-lg shadow space-y-6">
+        <div className="bg-blue-50 p-6 rounded-lg">
+          <h3 className="font-bold text-lg text-purple-600 mb-4">Paragraph 1: What is electricity?</h3>
+          <p className="text-lg leading-relaxed">
+            Electricity is the flow of very small things called electrons. It can also mean the energy you get when electrons flow from place to place. We can see electricity in nature when there is a bolt of lightning in the sky. This is just a large number of electrons moving through air at the same time, making a huge amount of energy. Scientists have also learned how to generate, or make, electricity. This can be controlled and sent through wires. It can then power such things as heaters, light bulbs, and computers. Today, electricity provides most of the energy to run the modern world.
+          </p>
+        </div>
 
-                <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
-                  {activities[currentActivity]}
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <button
-                    onClick={() => setCurrentActivity(Math.max(0, currentActivity - 1))}
-                    disabled={currentActivity === 0}
-                    className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:bg-gray-300 transition"
+        <div className="space-y-6">
+          {activity7Questions.map((q) => (
+            <div key={q.id} className="border-2 border-purple-200 p-4 rounded-lg">
+              <p className="font-semibold mb-3 text-lg">{q.id}. {q.question}</p>
+              <div className="space-y-2">
+                {q.options.map((option) => (
+                  <label
+                    key={option}
+                    className={`flex items-center p-3 rounded-lg cursor-pointer transition ${
+                      activity7Answers[q.id] === option
+                        ? activity7Checked
+                          ? option === q.correct
+                            ? 'bg-green-100 border-2 border-green-500'
+                            : 'bg-red-100 border-2 border-red-500'
+                          : 'bg-purple-100 border-2 border-purple-500'
+                        : 'bg-gray-50 hover:bg-gray-100 border-2 border-gray-200'
+                    }`}
                   >
-                    Previous
-                  </button>
+                    <input
+                      type="radio"
+                      name={`question${q.id}`}
+                      value={option}
+                      checked={activity7Answers[q.id] === option}
+                      onChange={() => setActivity7Answers({ ...activity7Answers, [q.id]: option })}
+                      disabled={activity7Checked}
+                      className="mr-3"
+                    />
+                    <span className="text-base">{option}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
-                  <button
-                    onClick={() => setCurrentActivity(Math.min(6, currentActivity + 1))}
-                    disabled={currentActivity === 6}
-                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 transition"
-                  >
-                    Next
-                  </button>
-                </div>{currentActivity === 6 && (
-                  <div className="mt-6">
-                    {completedActivities.length === 7 ? (
-                      <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 rounded-lg shadow-2xl p-8 text-center text-white">
-                        <div className="text-8xl mb-4 animate-bounce">🏆</div>
-                        <h2 className="text-4xl font-bold mb-2">🎉 Congratulations! 🎉</h2>
-                        <p className="text-2xl mb-6">You've completed all activities successfully!</p>
-                        
-                        <div className="bg-white text-gray-800 rounded-xl p-8 mb-6 shadow-xl">
-                          <h3 className="text-3xl font-bold text-purple-700 mb-4">Certificate of Completion</h3>
-                          <p className="text-xl mb-2">ESP 0103 - Electric Current - Reading 6</p>
-                          <p className="text-lg text-gray-600 mb-4">Higher Colleges of Technology</p>
-                          <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-6 mb-4">
-                            <p className="text-3xl font-bold text-green-700 mb-2">Final Score: {points} points</p>
-                            <p className="text-lg text-gray-700">All 7 activities completed with 75% or higher!</p>
-                          </div>
-                          <div className="flex justify-center gap-2 my-4">
-                            <span className="text-5xl">⭐</span>
-                            <span className="text-5xl">⭐</span>
-                            <span className="text-5xl">⭐</span>
-                          </div>
-                          <p className="text-sm text-gray-500 italic">Designed by: Nazila Motahari</p>
-                        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-600">
+            Answered: {Object.keys(activity7Answers).length} / 5
+          </span>
+        </div>
 
-                        <div className="flex justify-center gap-4">
-                          <button
-                            onClick={downloadCertificate}
-                            className="px-8 py-4 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition flex items-center gap-2 shadow-lg text-lg"
-                          >
-                            <lucide-react icon="download" size={24} />
-                            Download Certificate
-                          </button>
-                          <button
-                            onClick={resetLesson}
-                            className="px-8 py-4 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition flex items-center gap-2 shadow-lg text-lg"
-                          >
-                            <lucide-react icon="refresh-cw" size={24} />
-                            Practice Again
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg shadow-lg p-8 text-center text-white">
-                        <h2 className="text-2xl font-bold mb-4">⚠ Incomplete Activities</h2>
-                        <p className="text-lg mb-4">You still have {7 - completedActivities.length} {7 - completedActivities.length === 1 ? 'activity' : 'activities'} to complete!</p>
-                        
-                        <div className="bg-white/20 rounded-lg p-6 mb-4">
-                          <p className="text-xl font-bold mb-3">Missing Activities:</p>
-                          <div className="flex flex-wrap justify-center gap-2">
-                            {[1, 2, 3, 4, 5, 6, 7].map(num => {
-                              if (!completedActivities.includes(num)) {
-                                return (
-                                  <button
-                                    key={num}
-                                    onClick={() => setCurrentActivity(num - 1)}
-                                    className="px-4 py-2 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition"
-                                  >
-                                    Go to Activity {num}
-                                  </button>
-                                );
-                              }
-                              return null;
-                            })}
-                          </div>
-                        </div>
-
-                        <p className="text-lg mb-2">Current Score: {points} points</p>
-                        <p className="text-sm opacity-90">Complete all activities to see your final score!</p>
-                      </div>
-                    )}
-                  </div>
+        {!activity7Checked ? (
+          <button
+            onClick={checkActivity7}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          >
+            Check Answers
+          </button>
+        ) : (
+          <div className="space-y-4">
+            <div className={`p-4 rounded-lg ${activity7Score >= 75 ? 'bg-green-100 border-2 border-green-500' : 'bg-orange-100 border-2 border-orange-500'}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-bold">{activity7Score >= 75 ? '✓ Great job!' : '⚠ Keep practicing!'}</p>
+                  <p className="text-lg">Your Score: {activity7Score}%</p>
+                  {activity7Score < 75 && (
+                    <p className="text-sm mt-1">You need 75% or higher to complete this activity. Please try again!</p>
+                  )}
+                </div>
+                {activity7Score >= 75 ? (
+                  <CheckCircle size={48} className="text-green-600" />
+                ) : (
+                  <XCircle size={48} className="text-orange-600" />
                 )}
               </div>
             </div>
-          );
-        };        // Render the app
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<ElectricCurrentLesson />);
-    </script>
+            {activity7Score < 75 && (
+              <button
+                onClick={retryActivity7}
+                className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <RefreshCw size={20} />
+                Try Again
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
-    <script>
-        // Initialize Lucide icons after page load
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.lucide) {
-                lucide.createIcons();
-            }
-        });
-    </script>
-</body>
-</html>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-purple-700 flex items-center gap-2">
+                <Zap className="text-yellow-500" size={36} />
+                ESP 0103 - Electric Current - Reading 6
+              </h1>
+              <p className="text-sm text-gray-600 mt-1">Higher Colleges of Technology</p>
+              <p className="text-xs text-gray-500">Designed by: Nazila Motahari</p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-purple-600">{points} pts</div>
+              <div className="text-sm text-gray-600">Total Points</div>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <div className="flex justify-between text-sm mb-1">
+              <span className="text-gray-600">Progress</span>
+              <span className="text-purple-600 font-semibold">{completedActivities.length}/7 Activities</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 flex-wrap">
+            {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+              <button
+                key={num}
+                onClick={() => setCurrentActivity(num - 1)}
+                className={`px-4 py-2 rounded-lg font-semibold transition ${
+                  currentActivity === num - 1
+                    ? 'bg-purple-600 text-white'
+                    : completedActivities.includes(num)
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {completedActivities.includes(num) && <CheckCircle size={16} className="inline mr-1" />}
+                Activity {num}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+          {activities[currentActivity]}
+        </div>
+
+        <div className="flex justify-between items-center">
+          <button
+            onClick={() => setCurrentActivity(Math.max(0, currentActivity - 1))}
+            disabled={currentActivity === 0}
+            className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 disabled:bg-gray-300 transition"
+          >
+            Previous
+          </button>
+
+          <button
+            onClick={() => setCurrentActivity(Math.min(6, currentActivity + 1))}
+            disabled={currentActivity === 6}
+            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 transition"
+          >
+            Next
+          </button>
+        </div>
+
+        {currentActivity === 6 && (
+          <div className="mt-6">
+            {completedActivities.length === 7 ? (
+              <div className="bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 rounded-lg shadow-2xl p-8 text-center text-white">
+                <Trophy size={80} className="mx-auto mb-4 animate-bounce" />
+                <h2 className="text-4xl font-bold mb-2">🎉 Congratulations! 🎉</h2>
+                <p className="text-2xl mb-6">You've completed all activities successfully!</p>
+                
+                <div className="bg-white text-gray-800 rounded-xl p-8 mb-6 shadow-xl">
+                  <h3 className="text-3xl font-bold text-purple-700 mb-4">Certificate of Completion</h3>
+                  <p className="text-xl mb-2">ESP 0103 - Electric Current - Reading 6</p>
+                  <p className="text-lg text-gray-600 mb-4">Higher Colleges of Technology</p>
+                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-6 mb-4">
+                    <p className="text-3xl font-bold text-green-700 mb-2">Final Score: {points} points</p>
+                    <p className="text-lg text-gray-700">All 7 activities completed with 75% or higher!</p>
+                  </div>
+                  <div className="flex justify-center gap-2 my-4">
+                    <Star size={40} fill="#f4d03f" color="#f4d03f" />
+                    <Star size={40} fill="#f4d03f" color="#f4d03f" />
+                    <Star size={40} fill="#f4d03f" color="#f4d03f" />
+                  </div>
+                  <p className="text-sm text-gray-500 italic">Designed by: Nazila Motahari</p>
+                </div>
+
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={downloadCertificate}
+                    className="px-8 py-4 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition flex items-center gap-2 shadow-lg text-lg"
+                  >
+                    <Download size={24} />
+                    Download Certificate
+                  </button>
+                  <button
+                    onClick={resetLesson}
+                    className="px-8 py-4 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition flex items-center gap-2 shadow-lg text-lg"
+                  >
+                    <RefreshCw size={24} />
+                    Practice Again
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg shadow-lg p-8 text-center text-white">
+                <h2 className="text-2xl font-bold mb-4">⚠ Incomplete Activities</h2>
+                <p className="text-lg mb-4">You still have {7 - completedActivities.length} {7 - completedActivities.length === 1 ? 'activity' : 'activities'} to complete!</p>
+                
+                <div className="bg-white/20 rounded-lg p-6 mb-4">
+                  <p className="text-xl font-bold mb-3">Missing Activities:</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {[1, 2, 3, 4, 5, 6, 7].map(num => {
+                      if (!completedActivities.includes(num)) {
+                        return (
+                          <button
+                            key={num}
+                            onClick={() => setCurrentActivity(num - 1)}
+                            className="px-4 py-2 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition"
+                          >
+                            Go to Activity {num}
+                          </button>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </div>
+
+                <p className="text-lg mb-2">Current Score: {points} points</p>
+                <p className="text-sm opacity-90">Complete all activities to see your final score!</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
